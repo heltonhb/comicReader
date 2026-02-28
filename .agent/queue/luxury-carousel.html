@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Luxury 3D Comic Carousel Home</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3713ec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#0a0f1c",
+                        "void-black": "#0a0f1c",
+                        "starlight-white": "#F3F4F6",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Manrope', sans-serif;
+            background-color: #0a0f1c;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .neon-border {
+            box-shadow: 0 0 15px rgba(55, 19, 236, 0.4), inset 0 0 5px rgba(55, 19, 236, 0.2);
+            border: 2px solid #3713ec;
+        }
+        .glow-bar {
+            box-shadow: 0 0 8px #3713ec;
+        }
+        .carousel-container {
+            perspective: 1000px;
+        }
+        .bg-void-gradient {
+            background: radial-gradient(circle at top right, #1a1635 0%, #0a0f1c 60%);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-starlight-white overflow-hidden font-display">
+<div class="relative flex h-screen w-full flex-col bg-void-gradient overflow-hidden">
+<!-- Header -->
+<header class="flex items-center justify-between px-6 pt-12 pb-6 z-10">
+<div class="flex items-center gap-3">
+<div class="size-10 rounded-full border border-primary/30 p-0.5">
+<img alt="Profile" class="w-full h-full rounded-full object-cover" data-alt="User profile avatar with premium aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAhdKadxrWMcOLsKrwTWZUgQrkB_qZ4h6FJaXZbU98TZpOqdzECn5QPBA5n3NllCVsWI44Ah8hXaUetXn_gzXJhIP2Hs6C6gM3h86sEilwfl-IsMZzhnYwUzFT42VbbAjZTbcxEp9lADLtZMyYuKubF_KVR2MEjWNylVAx7_QjV0dcCAsAx8WboH7jEmR7mkTIAQXqBmPik1hUhL4okhWH3tNo8YK-4JTABsit6jI5etcd6yZLyFMJz6bLZFsrn4Ax2RM1hR2U1Bgc"/>
+</div>
+<div>
+<h1 class="text-sm font-medium text-primary/80 uppercase tracking-widest">Premium</h1>
+<p class="text-lg font-bold leading-none">Luxury Library</p>
+</div>
+</div>
+<div class="flex gap-4">
+<button class="flex size-10 items-center justify-center rounded-full bg-white/5 border border-white/10">
+<span class="material-symbols-outlined text-starlight-white">search</span>
+</button>
+<button class="relative flex size-10 items-center justify-center rounded-full bg-white/5 border border-white/10">
+<span class="material-symbols-outlined text-starlight-white">notifications</span>
+<span class="absolute top-2.5 right-2.5 size-2 bg-primary rounded-full glow-bar"></span>
+</button>
+</div>
+</header>
+<!-- 3D Carousel Section -->
+<main class="flex-1 flex flex-col justify-center items-center relative overflow-visible carousel-container">
+<!-- Navigation Arrows (Absolute) -->
+<div class="absolute inset-x-4 top-1/2 -translate-y-1/2 flex justify-between items-center z-20 pointer-events-none">
+<button class="pointer-events-auto flex size-12 items-center justify-center rounded-full glass-card hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined text-starlight-white text-3xl">chevron_left</span>
+</button>
+<button class="pointer-events-auto flex size-12 items-center justify-center rounded-full glass-card hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined text-starlight-white text-3xl">chevron_right</span>
+</button>
+</div>
+<!-- Carousel Track -->
+<div class="flex items-center justify-center gap-8 w-full transition-transform duration-500">
+<!-- Side Comic (Left) -->
+<div class="w-48 aspect-[2/3] rounded-xl overflow-hidden opacity-40 scale-75 rotate-y-12 grayscale-[0.5] glass-card shrink-0 hidden sm:block">
+<img class="w-full h-full object-cover" data-alt="Dark fantasy comic book cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXW1zhcVBnm5efeCzQaGtOikniBOAb8xyOE036Gma83PnSqcXBpkeQ09of4LoKE7W3O_A5eU6_m74XMRpa23wsW2kRr137KONHvrOCymdylb_XlaqMldqTu-bgOqsTPwnvJRvRfQ0KUTP-6IkFxaKOQdJt-pxhfgtGgmzHl9Twn0YKiYrC90YzarVYjH-WntrpwnddMld4obXkK0jo42pgw8Y6UiZbCkYc1MToNGeCxSTPeikt1cX07SOiiBusqDoc-qykHT7WPrk"/>
+</div>
+<!-- Active Central Comic -->
+<div class="relative z-10 flex flex-col items-center">
+<div class="w-64 sm:w-80 aspect-[2/3] rounded-2xl overflow-hidden neon-border relative group shadow-2xl">
+<img class="w-full h-full object-cover" data-alt="Guardians of the void comic cover art" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD-aeNkHoYd7IBMRu6neptgqH_RkjY-5XVvJZqEZ1xqr25VhO3wBt_RStlUBbmVjAY0ndGZysb_lnGS5dO4POrpNv7SlXedwpEGvrGOUgj4k5Ljod4dDSig1TXAgy24O8exKsMSrCY5ouSyR8ieU9jI8No-LNl6Xjq-_0raq9ueiDzjkN6jIqawVOX4uPyv0M14bj63TXvGamdSrxBO1yLaWIUdsbKVxPC3qxgTAABXMb8C96qb3swVSvcSSb_120-ly_KKRxeenYA"/>
+<!-- Glass Overlay Bottom -->
+<div class="absolute bottom-0 inset-x-0 h-1/4 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-4">
+<span class="text-[10px] font-bold tracking-[0.2em] text-primary/90 uppercase">Currently Reading</span>
+</div>
+</div>
+<!-- Comic Info -->
+<div class="mt-8 text-center px-4 w-full max-w-sm">
+<h2 class="text-2xl sm:text-3xl font-extrabold text-starlight-white tracking-tight mb-1">O Despertar dos Guardiões</h2>
+<p class="text-primary/60 text-sm font-medium tracking-wide mb-6">Chapter 24 • Sci-Fi Fantasy</p>
+<!-- Progress Bar Container -->
+<div class="w-full space-y-2">
+<div class="flex justify-between items-end">
+<span class="text-[10px] font-semibold text-white/40 uppercase tracking-tighter">Reading Progress</span>
+<span class="text-sm font-bold text-primary">65%</span>
+</div>
+<div class="h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
+<div class="h-full bg-primary glow-bar transition-all duration-700 rounded-full" style="width: 65%;"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Side Comic (Right) -->
+<div class="w-48 aspect-[2/3] rounded-xl overflow-hidden opacity-40 scale-75 -rotate-y-12 grayscale-[0.5] glass-card shrink-0 hidden sm:block">
+<img class="w-full h-full object-cover" data-alt="Space adventure comic book cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDQpD_hxqiz36hIf49i1cM-YUWSSq4Wq5UBaZtHzCR9Wg6HcaiWk6f0GPNBEX76nBmQoSdgvBO159xAZ-JD5LVpFIbT4HpxTqEV5TsEvifX1wg1Dp2qYKhMSdhCbOEaNCFu5MyXZo3j_apcJeAGyE0WLd0dZhwF0OHKz4upqSPpNO7-hz6K-8xl_WCgfidU5lE3C2r5-PLKRcSliqqY-_LtY7EzJkFx67y-Z0muQouzzSudY69p42CvgZAbVZsJqxybVfyyktRsIIs"/>
+</div>
+</div>
+<!-- Action Buttons -->
+<div class="mt-10 flex gap-4">
+<button class="px-8 py-3 bg-primary rounded-full text-white font-bold text-sm tracking-wide shadow-lg shadow-primary/20 hover:scale-105 transition-transform active:scale-95">
+                    CONTINUE READING
+                </button>
+<button class="flex size-12 items-center justify-center rounded-full glass-card hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined text-starlight-white">bookmark</span>
+</button>
+</div>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="pb-10 pt-2 px-6 z-20">
+<div class="glass-card rounded-full p-2 flex items-center justify-around border-white/5">
+<a class="flex size-12 items-center justify-center rounded-full bg-primary text-white shadow-lg shadow-primary/30" href="#">
+<span class="material-symbols-outlined">home</span>
+</a>
+<a class="flex size-12 items-center justify-center rounded-full text-white/50 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined">auto_stories</span>
+</a>
+<a class="flex size-12 items-center justify-center rounded-full text-white/50 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined">explore</span>
+</a>
+<a class="flex size-12 items-center justify-center rounded-full text-white/50 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined">person</span>
+</a>
+</div>
+</nav>
+<!-- Background Ambient Glow -->
+<div class="absolute -bottom-20 -left-20 size-80 bg-primary/20 rounded-full blur-[120px]"></div>
+<div class="absolute -top-20 -right-20 size-80 bg-blue-500/10 rounded-full blur-[100px]"></div>
+</div>
+</body></html>

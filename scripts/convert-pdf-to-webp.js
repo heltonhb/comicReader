@@ -7,6 +7,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const PUBLIC_DIR = path.resolve(__dirname, '../public');
+const SOURCE_DIR = path.resolve(__dirname, '../source_hqs');
 const VOLUMES_DIR = path.resolve(PUBLIC_DIR, 'volumes');
 
 // Configuração do pdf2pic
@@ -24,12 +25,12 @@ async function convertPdfs() {
         fs.mkdirSync(VOLUMES_DIR, { recursive: true });
     }
 
-    const files = fs.readdirSync(PUBLIC_DIR).filter(f => f.endsWith('.pdf'));
+    const files = fs.readdirSync(SOURCE_DIR).filter(f => f.endsWith('.pdf'));
 
     for (const file of files) {
         const volumeId = file.replace('_final.pdf', '').toLowerCase();
         const volumePath = path.join(VOLUMES_DIR, volumeId);
-        const pdfPath = path.join(PUBLIC_DIR, file);
+        const pdfPath = path.join(SOURCE_DIR, file);
 
         if (!fs.existsSync(volumePath)) {
             fs.mkdirSync(volumePath, { recursive: true });

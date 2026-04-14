@@ -17,6 +17,15 @@
 **Goal:** Possuir um painel interno onde criar novos volumes se torna um drag-and-drop massivo e não requer alteração de código.
 
 ### Phase 3: The Admin Panel
-- **Plan 3.1:** Proteção de rota e Firebase Custom Claims verificando privilégios.
-- **Plan 3.2:** Formulário de Catalogação.
-- **Plan 3.3:** Dropzone e integração com Storage uploader massivo.
+
+**Goal:** Possuir um painel interno onde criar novos volumes se torna um drag-and-drop massivo e não requer alteração de código.
+
+**Plans:**
+- **Plan 3.1:** Route protection with Firebase Custom Claims verifying admin privileges.
+- **Plan 3.2:** Cataloging form for volume creation in Firestore.
+- **Plan 3.3:** Dropzone for mass file upload to Firebase Storage.
+
+**Plan list:**
+- [ ] 03-01-PLAN.md — Route protection with admin checks
+- [ ] 03-02-PLAN.md — Cataloging form
+- [ ] 03-03-PLAN.md — Dropzone upload

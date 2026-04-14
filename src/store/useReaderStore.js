@@ -3,7 +3,9 @@ import { create } from 'zustand';
 export const useReaderStore = create((set) => ({
     // Navigation & State
     isZoomed: false,
+    zoomScale: 1,
     setIsZoomed: (isZoomed) => set({ isZoomed }),
+    setZoomScale: (scale) => set({ zoomScale: scale }),
     toggleZoom: () => set((state) => ({ isZoomed: !state.isZoomed })),
 
     readingMode: 'flipbook', // 'flipbook' | 'webtoon'
@@ -24,7 +26,9 @@ export const useReaderStore = create((set) => ({
     // Reset store when closing volume
     reset: () => set({
         isZoomed: false,
+        zoomScale: 1,
         readingMode: 'flipbook',
         showThumbnails: false,
     }),
 }));
+

@@ -1,50 +1,12 @@
-import React, { forwardRef, memo, useState, useRef } from 'react';
-import { Page as PdfPage } from 'react-pdf';
-import LoadingSpinner from './LoadingSpinner';
-import { motion, useAnimation } from 'framer-motion';
+import React, { forwardRef, memo, useState } from 'react';
 
-const Page = memo(forwardRef(({ pageNumber, width, height, folder, style, disableInternalZoom, ...props }, ref) => {
-    // Guided view state (zoom)
-    const [isZoomed, setIsZoomed] = useState(false);
-    const controls = useAnimation();
-    const containerRef = useRef(null);
-
-    const handleDoubleTap = (e) => {
-        if (disableInternalZoom) return;
-
-        if (!isZoomed) {
-            const rect = containerRef.current.getBoundingClientRect();
-            const clientX = e.clientX ?? (e.changedTouches?.[0]?.clientX || rect.left + rect.width / 2);
-            const clientY = e.clientY ?? (e.changedTouches?.[0]?.clientY || rect.top + rect.height / 2);
-
-            const x = clientX - rect.left;
-            const y = clientY - rect.top;
-
-            const xPercent = (x / rect.width) * 100;
-            const yPercent = (y / rect.height) * 100;
-
-            controls.start({
-                scale: 1.8,
-                originX: xPercent / 100,
-                originY: yPercent / 100,
-                transition: { type: 'spring', stiffness: 300, damping: 30 }
-            });
-            setIsZoomed(true);
-        } else {
-            controls.start({
-                scale: 1,
-                x: 0,
-                y: 0,
-                transition: { type: 'spring', stiffness: 300, damping: 30 }
-            });
-            setIsZoomed(false);
-        }
-    };
+const Page = memo(forwardRef(({ pageNumber, width, height, folder, style, isWebtoon, isMobileLandscape, isVisible = true, ...props }, ref) => {
+    const [isLoaded, setIsLoaded] = useState(false);
 
     return (
         <div
             ref={ref}
-            className="bg-gray-900 overflow-hidden relative flex items-center justify-center shadow-lg"
+            className={`bg-zinc-950 overflow-hidden relative flex items-center justify-center ${isWebtoon ? '' : 'shadow-2xl border-x border-white/5'}`}
             style={{
                 ...style,
                 ...(width ? { width } : {}),
@@ -52,44 +14,33 @@ const Page = memo(forwardRef(({ pageNumber, width, height, folder, style, disabl
             }}
             {...props}
         >
-            {folder ? (
-                <motion.div
-                    ref={containerRef}
-                    className="w-full h-full min-h-[50vh] flex items-center justify-center cursor-zoom-in touch-none"
-                    onDoubleClick={handleDoubleTap}
-                    animate={controls}
-                    drag={isZoomed}
-                    dragConstraints={containerRef}
-                    dragElastic={0.1}
+            {isVisible && folder ? (
+                <div
+                    className={`w-full h-full flex items-center justify-center ${isWebtoon ? '' : 'min-h-[50vh]'}`}
                 >
+                    {!isLoaded && (
+                        <div className="absolute inset-0 w-full h-full bg-zinc-900 animate-pulse">
+                            <div className="absolute inset-0 bg-gradient-to-r from-zinc-900 via-zinc-800 to-zinc-900 animate-shimmer" />
+                        </div>
+                    )}
                     <img
                         src={`${folder}/page.${pageNumber}.webp`}
                         alt={`Página ${pageNumber}`}
-                        className="absolute inset-0 w-full h-full pointer-events-none block origin-center"
-                        style={{ objectFit: (typeof window !== 'undefined' && window.innerWidth < 768) ? 'fill' : 'contain' }}
+                        className={`absolute inset-0 w-full h-full pointer-events-none block origin-center z-10 transition-opacity duration-300 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
+                        style={{ objectFit: (isWebtoon || isMobileLandscape) ? 'fill' : 'contain' }}
                         loading="lazy"
+                        decoding="async"
+                        fetchPriority={pageNumber <= 2 ? 'high' : 'auto'}
+                        onLoad={() => setIsLoaded(true)}
                     />
-                </motion.div>
+                </div>
             ) : (
-                <div className="w-full h-full flex items-center justify-center p-[1px] relative">
-                    <PdfPage
-                        pageNumber={pageNumber}
-                        width={width ? width - 2 : undefined}
-                        height={height ? height - 2 : undefined}
-                        renderAnnotationLayer={false}
-                        renderTextLayer={false}
-                        devicePixelRatio={Math.min(window.devicePixelRatio || 1, 2)}
-                        loading={
-                            <div className="absolute inset-0 flex items-center justify-center bg-gray-800 text-white">
-                                <LoadingSpinner size={32} />
-                            </div>
-                        }
-                        className="flex items-center justify-center !bg-transparent"
-                    />
+                <div className="w-full h-full bg-zinc-950 flex items-center justify-center">
+                    <span className="text-white/5 text-[8px]">{pageNumber}</span>
                 </div>
             )}
 
-            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 text-[10px] font-bold text-white/50 pointer-events-none z-10 mix-blend-difference">
+            <div className="absolute bottom-3 right-4 text-[9px] font-bold text-white/20 pointer-events-none z-10 uppercase tracking-tighter">
                 {pageNumber}
             </div>
         </div>
@@ -99,4 +50,5 @@ const Page = memo(forwardRef(({ pageNumber, width, height, folder, style, disabl
 Page.displayName = 'Page';
 
 export default Page;
+
 

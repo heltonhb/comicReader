@@ -1,11 +1,12 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
-import { pdfjs } from 'react-pdf';
+import { motion, AnimatePresence } from 'framer-motion';
 
-pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
+// analytics
+import { trackEvent } from '../analytics';
 
 import FlipbookReader from './FlipbookReader';
 import ReaderControls from './ReaderControls';
-import ZoomOverlay from './ZoomOverlay';
+
 import ProgressBar from './ProgressBar';
 import ThumbnailDrawer from './ThumbnailDrawer';
 import WebtoonMode from './WebtoonMode';
@@ -22,7 +23,6 @@ import { useSwipeNavigation } from '../hooks/useSwipeNavigation';
 import { useReaderStore } from '../store/useReaderStore';
 
 const Book = ({ volume, onBack }) => {
-    const file = volume.file;
     const totalStorageKey = `hq-reader-total-${volume.id}`;
 
     const {
@@ -33,7 +33,6 @@ const Book = ({ volume, onBack }) => {
 
     const [numPages, setNumPages] = useState(null);
     const [error, setError] = useState(null);
-    const [useWebp, setUseWebp] = useState(false);
     const bookRef = useRef(null);
 
     // Custom hooks
@@ -72,18 +71,15 @@ const Book = ({ volume, onBack }) => {
                             height: img.naturalHeight,
                             aspectRatio: singlePageWidthVal / img.naturalHeight
                         });
-
-                        setUseWebp(true);
                         setError(null);
                     };
                     img.onerror = () => {
                         console.error("Falha ao carregar primeira página WebP para dimensões");
-                        setUseWebp(false);
                     };
                     img.src = `${volume.folder}/page.1.webp`;
                 })
                 .catch(() => {
-                    setUseWebp(false);
+                    console.error("Falha ao carregar metadados do WebP");
                 });
         }
     }, [volume.folder, setPdfDimensions]);
@@ -104,9 +100,9 @@ const Book = ({ volume, onBack }) => {
             const pageFlip = bookRef.current.pageFlip();
             const current = pageFlip.getCurrentPageIndex();
 
-            const isAtEnd = dimensions?.isMobile
-                ? current >= numPages - 1
-                : current >= numPages - 2;
+            const isAtEnd = dimensions?.isDesktopLandscape
+                ? current >= numPages - 2
+                : current >= numPages - 1;
 
             if (isAtEnd) {
                 if (onBack) onBack();
@@ -114,7 +110,7 @@ const Book = ({ volume, onBack }) => {
                 pageFlip.flipNext('bottom');
             }
         }
-    }, [numPages, dimensions?.isMobile, onBack]);
+    }, [numPages, dimensions?.isDesktopLandscape, onBack]);
 
     const prevFlip = useCallback(() => {
         if (bookRef.current) {
@@ -147,28 +143,13 @@ const Book = ({ volume, onBack }) => {
         resetControls: resetTimeout,
     });
 
-    // PDF callbacks
-    const onDocumentLoadSuccess = useCallback((pdf) => {
-        setNumPages(pdf.numPages);
-        setError(null);
-        pdf.getPage(1).then((page) => {
-            const viewport = page.getViewport({ scale: 1 });
-            if (viewport.width && viewport.height) {
-                setPdfDimensions({
-                    width: viewport.width,
-                    height: viewport.height,
-                    aspectRatio: viewport.width / viewport.height
-                });
-            }
-        }).catch(err => console.error("Falha ao obter dimensões da página", err));
-    }, [setPdfDimensions]);
+    // Removed PDF callbacks as react-pdf is no longer used
 
-    const onDocumentLoadError = useCallback((err) => {
-        console.error("Erro ao carregar PDF:", err);
-        setError("Falha ao carregar o PDF. Verifique sua conexão ou o caminho do arquivo.");
-    }, []);
-
-    const onFlip = useCallback((e) => setCurrentPage(e.data), [setCurrentPage]);
+    const onFlip = useCallback((e) => {
+        const newPage = e.data;
+        setCurrentPage(newPage);
+        trackEvent('flip_page', { volume_id: volume.id, page_number: newPage + 1 });
+    }, [setCurrentPage, volume.id]);
 
     const onChangeState = useCallback((e) => {
         if (e.data === 'flipping') {
@@ -183,14 +164,17 @@ const Book = ({ volume, onBack }) => {
                 bookRef.current.pageFlip().turnToPage(currentPage);
             } catch { /* ignore */ }
         }
+        // when the volume is first ready, record start event
+        if (numPages && hasRestored) {
+            trackEvent('start_volume', { volume_id: volume.id, num_pages: numPages });
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [numPages, hasRestored]);
 
-    // Zoom page width
-    const zoomWidth = dimensions?.isMobile ? (typeof window !== 'undefined' ? window.innerWidth : 600) : (dimensions?.width || 600);
+
 
     return (
-        <div className="flex flex-col items-center justify-center w-full h-full bg-background overflow-hidden relative" ref={containerRef}>
+        <div className="reader-container flex flex-col items-center justify-center w-full h-full bg-background overflow-hidden relative" ref={containerRef}>
 
             {error && (
                 <div className="absolute inset-0 flex items-center justify-center text-red-400 z-50 bg-background">
@@ -205,42 +189,59 @@ const Book = ({ volume, onBack }) => {
                 onBack={onBack}
             />
 
-            {/* Flipbook Mode */}
-            {readingMode === 'flipbook' && dimensions && (
-                <FlipbookReader
-                    volume={volume}
-                    useWebp={useWebp}
-                    numPages={numPages}
-                    currentPage={currentPage}
-                    dimensions={dimensions}
-                    singlePageWidth={singlePageWidth}
-                    singlePageHeight={singlePageHeight}
-                    pdfDimensions={pdfDimensions}
-                    bookRef={bookRef}
-                    showControls={showControls}
-                    onFlip={onFlip}
-                    onChangeState={onChangeState}
-                    onDocumentLoadSuccess={onDocumentLoadSuccess}
-                    onDocumentLoadError={onDocumentLoadError}
-                    onPrev={prevFlip}
-                    onNext={nextFlip}
-                    handleTouchStart={handleTouchStart}
-                    handleTouchEnd={handleTouchEnd}
-                />
-            )}
+            <AnimatePresence mode="wait">
+                {/* Flipbook Mode */}
+                {readingMode === 'flipbook' && dimensions && (
+                    <motion.div
+                        key="flipbook"
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        transition={{ duration: 0.3, ease: "easeInOut" }}
+                        className="absolute inset-0 w-full h-full flex flex-col items-center justify-center"
+                    >
+                        <FlipbookReader
+                            volume={volume}
+                            useWebp={true}
+                            numPages={numPages}
+                            currentPage={currentPage}
+                            dimensions={dimensions}
+                            singlePageWidth={singlePageWidth}
+                            singlePageHeight={singlePageHeight}
+                            pdfDimensions={pdfDimensions}
+                            bookRef={bookRef}
+                            showControls={showControls}
+                            onFlip={onFlip}
+                            onChangeState={onChangeState}
+                            onPrev={prevFlip}
+                            onNext={nextFlip}
+                            handleTouchStart={handleTouchStart}
+                            handleTouchEnd={handleTouchEnd}
+                        />
+                    </motion.div>
+                )}
 
-            {/* Webtoon Mode */}
-            {readingMode === 'webtoon' && (
-                <WebtoonMode
-                    file={file}
-                    folder={useWebp ? volume.folder : null}
-                    numPages={numPages}
-                    currentPage={currentPage}
-                    onPageChange={setCurrentPage}
-                    containerWidth={dimensions?.width || (typeof window !== 'undefined' ? window.innerWidth : 600)}
-                    onBack={onBack}
-                />
-            )}
+                {/* Webtoon Mode */}
+                {readingMode === 'webtoon' && (
+                    <motion.div
+                        key="webtoon"
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        transition={{ duration: 0.3, ease: "easeInOut" }}
+                        className="absolute inset-0 w-full h-full flex flex-col items-center justify-center"
+                    >
+                        <WebtoonMode
+                            folder={volume.folder}
+                            numPages={numPages}
+                            currentPage={currentPage}
+                            onPageChange={setCurrentPage}
+                            containerWidth={dimensions?.width || (typeof window !== 'undefined' ? window.innerWidth : 600)}
+                            onBack={onBack}
+                        />
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             {/* Loading state (flipbook only) */}
             {readingMode === 'flipbook' && !dimensions && !error && (
@@ -254,20 +255,10 @@ const Book = ({ volume, onBack }) => {
                 showControls={showControls}
             />
 
-            {/* Zoom Overlay (flipbook only) */}
-            {isZoomed && readingMode === 'flipbook' && (
-                <ZoomOverlay
-                    file={file}
-                    folder={useWebp ? volume.folder : null}
-                    pageNumber={currentPage + 1}
-                    width={zoomWidth}
-                    showControls={showControls}
-                />
-            )}
+
 
             <ThumbnailDrawer
-                file={file}
-                folder={useWebp ? volume.folder : null}
+                folder={volume.folder}
                 numPages={numPages}
                 currentPage={currentPage}
                 chapters={volume.chapters || []}

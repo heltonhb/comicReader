@@ -2,9 +2,16 @@ import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../firebase';
 import { useAuth } from './useAuth';
+
+// Padding constants per breakpoint
+const MOBILE_PADDING = 0;       // Edge-to-edge on mobile
+const TABLET_PADDING = 24;      // 12px each side
+const DESKTOP_PADDING = 48;     // 24px each side
+const PROGRESS_BAR_HEIGHT = 32; // Reserve space for bottom progress bar
+
 /**
  * Hook to calculate book dimensions based on container size and PDF aspect ratio.
- * Handles ResizeObserver + window resize fallback.
+ * Handles ResizeObserver + window resize fallback with debounce.
  */
 export function useBookDimensions(pdfDimensions) {
     const [containerDimensions, setContainerDimensions] = useState({
@@ -12,35 +19,43 @@ export function useBookDimensions(pdfDimensions) {
         height: typeof window !== 'undefined' ? window.innerHeight : 0
     });
     const containerRef = useRef(null);
+    const debounceRef = useRef(null);
 
     useEffect(() => {
         const updateDimensions = () => {
-            if (containerRef.current) {
-                const { width, height } = containerRef.current.getBoundingClientRect();
-                // Use visualViewport if available for more accurate mobile height (ignores address bar overlays)
-                const viewportHeight = window.visualViewport ? window.visualViewport.height : height;
-                const finalHeight = width < 768 ? Math.max(height, viewportHeight) : height;
+            clearTimeout(debounceRef.current);
+            debounceRef.current = setTimeout(() => {
+                if (containerRef.current) {
+                    const rect = containerRef.current.getBoundingClientRect();
+                    const width = rect.width;
+                    const height = rect.height;
 
-                if (width > 0 && finalHeight > 0) {
-                    setContainerDimensions({ width, height: finalHeight });
+                    // Prioritize visualViewport for precise height on mobile (avoids address bar issues)
+                    const viewportHeight = window.visualViewport ? window.visualViewport.height : height;
+                    const finalHeight = width < 1024 ? viewportHeight : height;
+
+                    if (width > 0 && finalHeight > 0) {
+                        setContainerDimensions(prev => {
+                            if (Math.abs(prev.width - width) < 1 && Math.abs(prev.height - finalHeight) < 1) return prev;
+                            return { width, height: finalHeight };
+                        });
+                    }
                 }
-            }
+            }, 100);
         };
 
-        updateDimensions();
-
-        const observerCallback = (entries) => {
+        const resizeObserver = new ResizeObserver((entries) => {
             if (entries[0]) {
                 const { width, height } = entries[0].contentRect;
                 if (width > 0 && height > 0) {
-                    setContainerDimensions({ width, height });
-                } else {
-                    updateDimensions();
+                    setContainerDimensions(prev => {
+                        if (Math.abs(prev.width - width) < 1 && Math.abs(prev.height - height) < 1) return prev;
+                        return { width, height };
+                    });
                 }
             }
-        };
+        });
 
-        const resizeObserver = new ResizeObserver(observerCallback);
         if (containerRef.current) {
             resizeObserver.observe(containerRef.current);
         }
@@ -48,12 +63,18 @@ export function useBookDimensions(pdfDimensions) {
         window.addEventListener('resize', updateDimensions);
         if (window.visualViewport) {
             window.visualViewport.addEventListener('resize', updateDimensions);
+            window.visualViewport.addEventListener('scroll', updateDimensions);
         }
+
+        updateDimensions();
+
         return () => {
+            clearTimeout(debounceRef.current);
             resizeObserver.disconnect();
             window.removeEventListener('resize', updateDimensions);
             if (window.visualViewport) {
                 window.visualViewport.removeEventListener('resize', updateDimensions);
+                window.visualViewport.removeEventListener('scroll', updateDimensions);
             }
         };
     }, []);
@@ -62,41 +83,72 @@ export function useBookDimensions(pdfDimensions) {
         if (containerDimensions.width === 0 || containerDimensions.height === 0) return null;
 
         const { width: cWidth, height: cHeight } = containerDimensions;
+
         const isMobile = cWidth < 768;
+        const isTablet = cWidth >= 768 && cWidth < 1024;
+        const isPortrait = cWidth <= cHeight;
+        const isDesktopLandscape = cWidth >= 1024 && !isPortrait;
+        const isMobileLandscape = isMobile && !isPortrait;
 
         const availableWidth = cWidth;
         const availableHeight = cHeight;
+        const enforceAspectRatio = pdfDimensions && pdfDimensions.aspectRatio > 0;
 
-        let bookWidth, bookHeight;
+        let singleWidth, singleHeight;
 
-        if (isMobile) {
-            bookWidth = availableWidth;
-            // Force the book height to occupy the entire screen on mobile
-            bookHeight = availableHeight;
-        } else {
-            const isLandscape = pdfDimensions.aspectRatio > 1;
-            const singlePageHeight = availableHeight;
-            const singlePageWidthVal = singlePageHeight * pdfDimensions.aspectRatio;
-
-            if (isLandscape || singlePageWidthVal * 2 > availableWidth) {
-                // Single page mode for landscape or very wide pages
-                bookHeight = Math.min(availableHeight, availableWidth / pdfDimensions.aspectRatio);
-                bookWidth = bookHeight * pdfDimensions.aspectRatio;
+        if (isMobile && isPortrait) {
+            // Mobile portrait: full width, no padding
+            singleWidth = availableWidth - MOBILE_PADDING;
+            if (enforceAspectRatio) {
+                singleHeight = Math.min(singleWidth / pdfDimensions.aspectRatio, availableHeight - PROGRESS_BAR_HEIGHT);
+                singleWidth = singleHeight * pdfDimensions.aspectRatio;
             } else {
-                // Double page mode
-                bookHeight = singlePageHeight;
-                bookWidth = singlePageWidthVal * 2;
+                singleHeight = availableHeight - PROGRESS_BAR_HEIGHT;
             }
+        } else if (isMobileLandscape) {
+            // Mobile landscape: prioritize height
+            singleHeight = availableHeight - PROGRESS_BAR_HEIGHT;
+            if (enforceAspectRatio) {
+                singleWidth = singleHeight * pdfDimensions.aspectRatio;
+            } else {
+                singleWidth = availableWidth;
+            }
+        } else if (isTablet && isPortrait) {
+            // Tablet portrait: slight padding
+            singleWidth = availableWidth - TABLET_PADDING;
+            if (enforceAspectRatio) {
+                singleHeight = Math.min(singleWidth / pdfDimensions.aspectRatio, availableHeight - PROGRESS_BAR_HEIGHT);
+                singleWidth = singleHeight * pdfDimensions.aspectRatio;
+            } else {
+                singleHeight = availableHeight - PROGRESS_BAR_HEIGHT;
+            }
+        } else if (isDesktopLandscape || (isTablet && !isPortrait)) {
+            // Desktop landscape or tablet landscape: 2-page spread
+            singleWidth = (availableWidth - DESKTOP_PADDING) / 2;
+            if (enforceAspectRatio) {
+                singleHeight = Math.min(singleWidth / pdfDimensions.aspectRatio, availableHeight - PROGRESS_BAR_HEIGHT);
+                singleWidth = singleHeight * pdfDimensions.aspectRatio;
+            } else {
+                singleHeight = availableHeight - PROGRESS_BAR_HEIGHT;
+            }
+        } else {
+            // Fallback
+            singleWidth = availableWidth;
+            singleHeight = availableHeight - PROGRESS_BAR_HEIGHT;
         }
 
         return {
-            width: Math.max(Math.floor(bookWidth), 300),
-            height: Math.max(Math.floor(bookHeight), 400),
-            isMobile
+            width: Math.floor(Math.max(singleWidth, 200)),
+            height: Math.floor(Math.max(singleHeight, 250)),
+            isMobile,
+            isTablet,
+            isPortrait,
+            isDesktopLandscape,
+            isMobileLandscape
         };
     }, [containerDimensions, pdfDimensions]);
 
-    const singlePageWidth = dimensions ? (dimensions.isMobile ? dimensions.width : dimensions.width / 2) : 300;
+    const singlePageWidth = dimensions ? dimensions.width : 300;
     const singlePageHeight = dimensions ? dimensions.height : 400;
 
     return { containerRef, dimensions, singlePageWidth, singlePageHeight };

@@ -6,13 +6,13 @@
 - **Humor do Projeto:** 🚀 Setup finalizado
 
 ## Últimas Ações
-- [x] Definição de Requisitos (UX Híbrida Web/Revista).
-- [x] Elaboração do ROADMAP.md
-- [x] Mapeamento técnico inicial (`gsd-map-codebase`).
-- [ ] Iniciar Phase 1 (Autenticação Firebase nas telas).
+- [x] Iniciar Phase 1 (Autenticação Firebase nas telas).
+- [x] Codificada a base da Store AuthStore (Zustand).
+- [x] Construído AuthModal para bloqueio de rotas unlogged.
 
 ## Próximos Passos (Próxima Sessão)
-1. Rodar `/gsd-execute-phase 1` para implementar as integrações de Auth e Zustand no código-fonte.
+1. Integrar autenticação ao roteamento de Volumes (esconder features restritas se aplicável).
+2. Avançar no Roadmap para as funções do Painel Admin (Volume Upload).
 
 ## Bloqueios / Riscos
 - Risco de dependências como `react-pageflip` não comportarem bem atualizações de aspect-ratio dinâmicas com Tailwind V3 nativo, exigindo CSS purista.

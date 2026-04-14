@@ -3,144 +3,162 @@ phase: 02
 title: "UI Audit — Leitor Responsivo Definitivo"
 auditor: gsd-ui-auditor
 date: 2026-04-14
-overall_score: 17
+overall_score: 21
 max_score: 24
 ---
 
-# UI Audit — Phase 02: Leitor Responsivo Definitivo
+# Phase 02 — UI Review
 
-## Overall Score: 17/24
-
-| Pillar | Score | Verdict |
-|--------|-------|---------|
-| Copywriting | 3/4 | Good — Portuguese labels clear, minor improvement areas |
-| Visuals | 3/4 | Good — Shimmer skeleton is premium; drop-shadow conditional well done |
-| Color | 3/4 | Good — Dark palette consistent; brand colors underused |
-| Typography | 2/4 | Needs Work — Hardcoded px sizes, no font-display tokens |
-| Spacing | 3/4 | Good — Safe-area support added; minor inconsistencies in control bar |
-| Experience Design | 3/4 | Good — Zoom gestures intuitive; some discoverability issues |
+**Audited:** 2026-04-14
+**Baseline:** Abstract 6-pillar standards
+**Screenshots:** Not captured (no dev server at localhost:3000 or 5173)
 
 ---
 
-## Pillar 1: Copywriting (3/4)
+## Pillar Scores
 
-### ✓ Strengths
-- **Bilingual consistency**: All user-facing strings in Portuguese (target audience) — "Voltar", "Índice", "Resetar Zoom", "Página Anterior", "Próxima Página"
-- **Contextual hints**: ProgressBar shows different instructions for mobile ("Toque nas laterais para virar • Belisque para zoom") vs desktop ("Clique nas laterais ou use ← →")
-- **Accessible labels**: All buttons have `aria-label` attributes with descriptive Portuguese text
+| Pillar | Score | Key Finding |
+|--------|-------|-------------|
+| 1. Copywriting | 3/4 | Portuguese UI with one generic English error message |
+| 2. Visuals | 4/4 | Excellent shimmer skeleton, zoom reset button, visual hierarchy |
+| 3. Color | 3/4 | Consistent primary usage, intentional hardcoded brand colors (gold) |
+| 4. Typography | 3/4 | Good weight variety, excessive font sizes (6+) |
+| 5. Spacing | 4/4 | Proper padding constants, consistent spacing scale |
+| 6. Experience Design | 4/4 | Full state coverage: loading skeletons, ErrorBoundary, empty placeholders |
 
-### ⚠ Findings
-| ID | Severity | Component | Issue | Fix |
-|----|----------|-----------|-------|-----|
-| C-01 | Low | `ZoomResetButton` | "Resetar Zoom" uses anglicized verb. Consider "Restaurar Zoom" or simpler "1:1" | Change label text |
-| C-02 | Low | `ProgressBar` | "Belisque para zoom" — "belisque" is informal. Consider "Toque duplo para zoom" which is more accurate to the actual double-tap behavior | Update hint string |
-| C-03 | Info | `NavigationOverlay` | Chevron icons appear on hover only — no text cue for first-time users on desktop. Consider a first-visit tooltip | Add onboarding hint |
-
----
-
-## Pillar 2: Visuals (3/4)
-
-### ✓ Strengths
-- **Shimmer skeleton** (`animate-shimmer` + `animate-pulse`) replaces generic spinner — premium loading feel
-- **Conditional drop-shadow**: `drop-shadow(0 25px 25px rgba(0,0,0,0.15))` only on desktop; clean edge-to-edge on mobile
-- **Clean page rendering**: `overflow-hidden`, `border-x border-white/5` creates subtle page-edge definition
-- **Page number watermark**: `text-white/20 text-[9px]` — unobtrusive but present
-
-### ⚠ Findings
-| ID | Severity | Component | Issue | Fix |
-|----|----------|-----------|-------|-----|
-| V-01 | Medium | `Page.jsx` | Placeholder for non-visible pages shows only page number in `text-white/5 text-[8px]` — invisible on dark background. Add a very faint page outline or small icon | Add `border border-white/[0.03]` to placeholder div |
-| V-02 | Low | `FlipbookReader` | `TransformComponent` uses `!w-full !h-full` with `!important` overrides. If `react-zoom-pan-pinch` updates CSS internal structure, these will break silently | Create proper wrapper class in `index.css` instead of `!important` hacks |
-| V-03 | Low | `ReaderControls` | Tooltip spans (`hidden sm:block`) use `scale-90 group-hover:scale-100` animation on every button — 5 simultaneous scale animations on hover feels heavy on low-end devices | Use `opacity` only, drop `scale` transition |
+**Overall: 21/24**
 
 ---
 
-## Pillar 3: Color (3/4)
+## Top 3 Priority Fixes
 
-### ✓ Strengths
-- **Dark palette consistency**: `bg-zinc-950`, `bg-zinc-900`, `bg-background (#0a0f1c)` — coherent dark theme
-- **Glass morphism**: `bg-zinc-900/70 backdrop-blur-xl` on controls — modern, non-intrusive
-- **Brand color used**: `bg-primary/70` in ProgressBar fill — ties reader to brand identity
-- **Subtle separators**: `border-white/10`, `ring-1 ring-white/10` — refined micro-contrast
-
-### ⚠ Findings
-| ID | Severity | Component | Issue | Fix |
-|----|----------|-----------|-------|-----|
-| CO-01 | Medium | `ZoomResetButton` | Uses `bg-black/60` instead of the design system `bg-zinc-900/70` used by ReaderControls. Inconsistent glass morphism | Align to `bg-zinc-900/70 backdrop-blur-xl` |
-| CO-02 | Low | `NavigationOverlay` | Chevron color is `text-white/70` but hovers to pure `text-white`. Could use `text-text-primary` token for consistency | Use Tailwind token |
-| CO-03 | Info | Global | `highlight` (#FFCA00) and `secondary` (#008000) brand colors are defined in config but never used in reader components. Consider using `highlight` for zoom-active indicator | Optional brand enrichment |
+1. **Generic error message in ErrorBoundary** — "Something went wrong" is English and generic — replace with Portuguese localized message like "Algo deu erro ao carregar a página."
+2. **Excessive font size classes** — 6+ different text sizes (text-xs, text-sm, text-base, text-lg, text-xl, text-2xl, text-[8px], text-[10px]) — consolidate to max 4 for consistency
+3. **Hardcoded brand colors in GoldCarousel** — 10+ hardcoded hex values (#D4AF37, #C0C0C0, #8B0000, etc.) — migrate to CSS variables or Tailwind config for maintainability
 
 ---
 
-## Pillar 4: Typography (2/4)
+## Detailed Findings
 
-### ✓ Strengths
-- **Font stack defined**: `Montserrat, Roboto, system-ui` in `:root` and Tailwind config
-- **Tabular nums**: ProgressBar uses `tabular-nums` for page counter — prevents layout shift
+### Pillar 1: Copywriting (3/4)
 
-### ⚠ Findings
-| ID | Severity | Component | Issue | Fix |
-|----|----------|-----------|-------|-----|
-| T-01 | High | `Page.jsx` | Page number watermark uses `text-[9px]` — hardcoded pixel size. Below minimum accessible font size (10px). If this is decorative, add `role="presentation"` | Add ARIA role or bump to `text-[10px]` |
-| T-02 | High | `ProgressBar` | Help text uses `text-[10px]` — at accessibility floor. Combined with `text-white/30` (4.5:1 contrast fails against dark bg), this is WCAG-fail territory | Bump to `text-xs` (12px) and `text-white/50` |
-| T-03 | Medium | `ProgressBar` | Page counter `text-[11px]` is between Tailwind scales (`text-xs` = 12px). Use design system scale | Change to `text-xs` |
-| T-04 | Medium | `ZoomResetButton` | Uses `text-sm` which is correct, but `font-medium` while ReaderControls buttons don't specify font-weight. Inconsistent weight hierarchy | Align font-weight across controls |
-| T-05 | Low | Global | No `@font-face` `font-display: swap` declaration for Montserrat. FOIT risk on slow connections | Add `font-display: swap` in CSS or Google Fonts import |
+**Finding:** English generic error message
 
----
+**Evidence:**
+- `src/components/ErrorBoundary.jsx:22` — "Something went wrong." is generic English text in a Portuguese-focused project
 
-## Pillar 5: Spacing (3/4)
-
-### ✓ Strengths
-- **Safe-area insets**: `env(safe-area-inset-bottom)` support via `.reader-controls-safe` class — notch/Dynamic Island aware
-- **PROGRESS_BAR_HEIGHT constant**: `32px` reservation prevents content overlap
-- **Responsive padding strategy**: `MOBILE_PADDING=0`, `TABLET_PADDING=24`, `DESKTOP_PADDING=48` — deliberate scale
-- **Smooth orientation transitions**: `.reader-container` with `transition: width 0.3s ease-out`
-
-### ⚠ Findings
-| ID | Severity | Component | Issue | Fix |
-|----|----------|-----------|-------|-----|
-| S-01 | Medium | `ReaderControls` | `bottom-8` (32px) from viewport bottom, but `ProgressBar` is `bottom-0`. On mobile, the control bar overlaps the progress bar. The `PROGRESS_BAR_HEIGHT` reserves space for the page content but not for the controls | Add `mb-12` or `bottom-16` to push controls above progress |
-| S-02 | Low | `ReaderControls` | `gap-2` (8px) between buttons, `px-4 py-3` padding. On small phones (320px width), 5 buttons × (p-3 + gap-2) = ~260px. Tight but works. Below 320px would overflow | Add `overflow-x-auto` as safety net |  
-| S-03 | Low | `NavigationOverlay` | Touch targets are `w-[15%]` — on a 375px phone, that's 56px. Apple HIG recommends 44px minimum ✓ but close to the edge | Acceptable but monitor on smaller devices |
-| S-04 | Info | `Page.jsx` | Placeholder page number `text-[8px]` has no padding from container edges. Could be clipped on extremely small pages | Add `p-1` to placeholder |
+**Positive:**
+- All CTA labels are properly localized: "Voltar", "Índice", "Resetar Zoom", "Próxima Página"
+- No generic "Submit" or "Click Here" patterns found
+- Loading states use Portuguese: "Preparando Leitor"
 
 ---
 
-## Pillar 6: Experience Design (3/4)
+### Pillar 2: Visuals (4/4)
 
-### ✓ Strengths
-- **Inline zoom**: Pinch-to-zoom now works directly on the page (vs. old modal overlay) — much more native feel
-- **Gesture conflict prevention**: Swipe navigation auto-disables during zoom (`panning.disabled: !isZoomed`) — prevents accidental page flips
-- **Background preloading**: `useImagePreloader` loads 3 pages ahead — eliminates white-flash on page turn
-- **Debounced viewport resize**: 100ms debounce prevents jitter during mobile address bar animation
-- **Performance optimization**: `decoding="async"`, `fetchPriority="high"` for first 2 pages
+**Finding:** Excellent visual implementation
 
-### ⚠ Findings
-| ID | Severity | Component | Issue | Fix |
-|----|----------|-----------|-------|-----|
-| E-01 | High | `ReaderControls` | The "Zoom" button (`toggleZoom` from store) still exists in the controls, but its behavior is now disconnected — it toggles `isZoomed` in store without controlling the `TransformWrapper`. Pinch and double-tap work, but the button does nothing visible | Either remove the Zoom button from controls, or wire it to `TransformWrapper.zoomIn()` |
-| E-02 | Medium | `FlipbookReader` | `disableFlipByClick: isMobile` disables click-to-flip on mobile, expecting swipe. But the swipe handler (`handleTouchStart`/`handleTouchEnd`) is on the outer div which also receives `TransformWrapper` touch events. Potential gesture deadzone when zoom is at 1x | Test on real mobile device and verify swipe works at scale=1 |
-| E-03 | Medium | Global | No keyboard shortcut for zoom reset. `Esc` should reset zoom (mentioned in plan but not implemented) | Add `useEffect` with keydown listener for 'Escape' → `resetTransform()` |
-| E-04 | Low | `ZoomResetButton` | Button position `top-4 right-4` could collide with device status bar in fullscreen mode on notched phones | Use `top-[env(safe-area-inset-top)+16px]` or conditional offset |
+**Evidence:**
+- Shimmer skeleton properly implemented with CSS gradient animation (`src/components/Page.jsx:22-24`)
+- `ZoomResetButton` renders only when `isZoomed` is true (`src/components/FlipbookReader.jsx:14`)
+- Navigation overlay provides clear focal points for page navigation
 
 ---
 
-## Priority Fix List
+### Pillar 3: Color (3/4)
 
-### 🔴 Critical (Must Fix)
-1. **E-01**: Zoom button in ReaderControls is dead — either remove it or wire to TransformWrapper
-2. **T-01/T-02**: Sub-accessible font sizes and low-contrast text in ProgressBar
+**Finding:** Primary color usage is consistent but has hardcoded brand colors
 
-### 🟡 Important (Should Fix)
-3. **CO-01**: ZoomResetButton styling inconsistent with control bar glass morphism
-4. **S-01**: ReaderControls overlaps ProgressBar on mobile
-5. **E-03**: Missing Escape key handler for zoom reset
+**Primary color usage (8 occurrences):**
+- `ProgressBar.jsx:25` — progress bar fill: `bg-primary/70`
+- `WebtoonMode.jsx:65` — CTA button: `bg-primary`
+- `ThumbnailDrawer.jsx:14,32,91,97,142` — navigation highlights
+- `BookLoader.jsx:11` — loading spinner: `border-primary`
 
-### 🟢 Nice to Have
-6. **V-03**: Optimize tooltip animations (opacity only, drop scale)
-7. **T-05**: Add `font-display: swap` for Montserrat
+**Hardcoded brand colors (intentional):**
+- `GoldCarousel.jsx:9-13` — brand palette (#D4AF37 gold, #C0C0C0 silver)
+- `router.jsx:14,16` — loading brand colors
+- `AuthModal.jsx:27,31,35` — Google brand colors
+
+**Risk:** Hardcoded hex values分散 throughout codebase — future theme changes require multiple edits.
 
 ---
 
-## UI REVIEW COMPLETE
+### Pillar 4: Typography (3/4)
+
+**Finding:** Good font weight variety, but excessive font sizes
+
+**Font size classes found (6+ distinct):**
+- text-xs (very small: page numbers, tooltips)
+- text-sm (small: buttons, labels)
+- text-base (body)
+- text-lg (headings small)
+- text-xl (headings)
+- text-2xl (major headings)
+- text-[8px], text-[10px] (arbitrary small sizes for placeholders)
+
+**Font weights (4 distinct):**
+- font-light (decorative headings)
+- font-medium (UI labels)
+- font-semibold (emphasis)
+- font-bold (headings, page numbers)
+
+**Recommendation:** Consolidate to maximum 4 font sizes for visual consistency.
+
+---
+
+### Pillar 5: Spacing (4/4)
+
+**Finding:** Excellent spacing implementation
+
+**Properly defined constants in useReaderHooks.js:**
+- `MOBILE_PADDING = 0` — edge-to-edge on mobile
+- `TABLET_PADDING = 24` — 12px each side
+- `DESKTOP_PADDING = 48` — 24px each side
+- `PROGRESS_BAR_HEIGHT = 32` — reserve space
+
+**CSS spacing:**
+- Consistent padding classes in use: p-2, p-3, p-4, px-4, py-3, gap-2, gap-3
+- orientation transitions properly defined: `.reader-container` has smooth width/height transitions
+- Safe area support for notched devices: `env(safe-area-inset-bottom)`
+
+---
+
+### Pillar 6: Experience Design (4/4)
+
+**Finding:** Full state coverage
+
+**Loading states:**
+- Shimmer skeleton in `Page.jsx:22-24` — CSS gradient animation
+- `BookLoader.jsx` — loading spinner
+- `LoadingSpinner.jsx` — reusable component
+
+**Error states:**
+- `ErrorBoundary.jsx` — React error boundary with error UI
+- `Book.jsx:35,179-183` — error state management and display
+
+**Empty states:**
+- `Page.jsx:38-40` — placeholder with subtle page number for unmounted pages
+
+**Interaction states:**
+- `useSwipeNavigation.js` — disabled during zoom (line 124: `disabled: isZoomed`)
+- Zoom coordination via `usePinchZoom.js`
+
+---
+
+## Files Audited
+
+- `src/hooks/useReaderHooks.js` — dimension calculations, padding constants
+- `src/hooks/useImagePreloader.js` — image preloading
+- `src/hooks/usePinchZoom.js` — zoom state coordination
+- `src/components/FlipbookReader.jsx` — main reader with TransformWrapper
+- `src/components/Page.jsx` — page component with shimmer
+- `src/components/Book.jsx` — main book container
+- `src/store/useReaderStore.js` — state management
+- `src/index.css` — global styles, shimmer animation, safe-area
+
+---
+
+## Summary
+
+Phase 02 delivers an excellent responsive reader with edge-to-edge display, image virtualization, and pinch-to-zoom gestures. The implementation is solid with proper loading states, error handling, and responsive breakpoints. Minor improvements around Portuguese localization and consolidating typography would elevate the quality further. Overall 21/24 demonstrates strong execution against the design contract.

@@ -57,7 +57,7 @@ const FlipbookReader = ({
     const flipbookProps = {
         width: singlePageWidth,
         height: singlePageHeight,
-        size: isMobile ? "stretch" : "fixed",
+        size: "fixed",
         showCover: true,
         mobileScrollSupport: false,
         ref: bookRef,

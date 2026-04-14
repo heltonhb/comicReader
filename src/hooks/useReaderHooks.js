@@ -97,11 +97,17 @@ export function useBookDimensions(pdfDimensions) {
         let singleWidth, singleHeight;
 
         if (isMobile && isPortrait) {
-            // Mobile portrait: full width, no padding
-            singleWidth = availableWidth - MOBILE_PADDING;
+            // Mobile portrait: full width edge-to-edge
+            singleWidth = availableWidth;
             if (enforceAspectRatio) {
-                singleHeight = Math.min(singleWidth / pdfDimensions.aspectRatio, availableHeight - PROGRESS_BAR_HEIGHT);
-                singleWidth = singleHeight * pdfDimensions.aspectRatio;
+                const heightFromWidth = singleWidth / pdfDimensions.aspectRatio;
+                if (heightFromWidth > availableHeight - PROGRESS_BAR_HEIGHT) {
+                    // Height-constrained: shrink width to fit height
+                    singleHeight = availableHeight - PROGRESS_BAR_HEIGHT;
+                    singleWidth = singleHeight * pdfDimensions.aspectRatio;
+                } else {
+                    singleHeight = heightFromWidth;
+                }
             } else {
                 singleHeight = availableHeight - PROGRESS_BAR_HEIGHT;
             }
@@ -110,6 +116,11 @@ export function useBookDimensions(pdfDimensions) {
             singleHeight = availableHeight - PROGRESS_BAR_HEIGHT;
             if (enforceAspectRatio) {
                 singleWidth = singleHeight * pdfDimensions.aspectRatio;
+                // Don't exceed available width
+                if (singleWidth > availableWidth) {
+                    singleWidth = availableWidth;
+                    singleHeight = singleWidth / pdfDimensions.aspectRatio;
+                }
             } else {
                 singleWidth = availableWidth;
             }
@@ -117,8 +128,13 @@ export function useBookDimensions(pdfDimensions) {
             // Tablet portrait: slight padding
             singleWidth = availableWidth - TABLET_PADDING;
             if (enforceAspectRatio) {
-                singleHeight = Math.min(singleWidth / pdfDimensions.aspectRatio, availableHeight - PROGRESS_BAR_HEIGHT);
-                singleWidth = singleHeight * pdfDimensions.aspectRatio;
+                const heightFromWidth = singleWidth / pdfDimensions.aspectRatio;
+                if (heightFromWidth > availableHeight - PROGRESS_BAR_HEIGHT) {
+                    singleHeight = availableHeight - PROGRESS_BAR_HEIGHT;
+                    singleWidth = singleHeight * pdfDimensions.aspectRatio;
+                } else {
+                    singleHeight = heightFromWidth;
+                }
             } else {
                 singleHeight = availableHeight - PROGRESS_BAR_HEIGHT;
             }
@@ -126,8 +142,13 @@ export function useBookDimensions(pdfDimensions) {
             // Desktop landscape or tablet landscape: 2-page spread
             singleWidth = (availableWidth - DESKTOP_PADDING) / 2;
             if (enforceAspectRatio) {
-                singleHeight = Math.min(singleWidth / pdfDimensions.aspectRatio, availableHeight - PROGRESS_BAR_HEIGHT);
-                singleWidth = singleHeight * pdfDimensions.aspectRatio;
+                const heightFromWidth = singleWidth / pdfDimensions.aspectRatio;
+                if (heightFromWidth > availableHeight - PROGRESS_BAR_HEIGHT) {
+                    singleHeight = availableHeight - PROGRESS_BAR_HEIGHT;
+                    singleWidth = singleHeight * pdfDimensions.aspectRatio;
+                } else {
+                    singleHeight = heightFromWidth;
+                }
             } else {
                 singleHeight = availableHeight - PROGRESS_BAR_HEIGHT;
             }

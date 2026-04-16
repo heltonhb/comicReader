@@ -1,5 +1,5 @@
 import { Navigate, Outlet } from 'react-router-dom';
-import { useAdminCheck } from '../useAdminCheck';
+import { useAdminCheck } from '../hooks/useAdminCheck';
 
 // Component for loading state
 const LoadingSpinner = () => (

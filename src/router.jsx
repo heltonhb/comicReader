@@ -3,8 +3,10 @@ import { createBrowserRouter } from 'react-router-dom';
 import React, { Suspense, lazy } from 'react';
 import App from './App';
 import VolumeSelector from './components/VolumeSelector';
+import AdminRoute from './components/AdminRoute';
 
 const BookWrapper = lazy(() => import('./components/BookWrapper'));
+const AdminPanel = lazy(() => import('./components/AdminPanel'));
 
 // Component for full screen loading fallback
 const BookLoader = () => (
@@ -33,6 +35,19 @@ export const router = createBrowserRouter([
                         <BookWrapper />
                     </Suspense>
                 ),
+            },
+            {
+                element: <AdminRoute />,
+                children: [
+                    {
+                        path: '/admin',
+                        element: (
+                            <Suspense fallback={<BookLoader />}>
+                                <AdminPanel />
+                            </Suspense>
+                        ),
+                    },
+                ],
             },
         ],
     },

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAdminStore } from '../store/adminStore';
 import VolumeForm from './VolumeForm';
+import Dropzone from './Dropzone';
 
 /**
  * AdminPanel - Main admin dashboard with sidebar navigation
@@ -125,10 +126,7 @@ const AdminPanel = () => {
           {activeTab === 'uploads' && (
             <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
               <h3 className="text-xl font-bold text-[#D4AF37] mb-4">File Upload</h3>
-              <div className="text-center py-12 text-gray-400">
-                <p>Dropzone component will be implemented in Plan 3.3</p>
-                <p className="mt-2 text-sm">Use the form to create volumes with existing URLs for now.</p>
-              </div>
+              <Dropzone />
             </div>
           )}
         </div>

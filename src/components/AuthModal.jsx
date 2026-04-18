@@ -2,7 +2,7 @@ import React from 'react';
 import { useAuthStore } from '../store/authStore';
 
 const AuthModal = () => {
-  const { loginWithGoogle, loading } = useAuthStore();
+  const { loginWithGoogle, loginAnonymously, loading } = useAuthStore();
 
   if (loading) return null;
 
@@ -16,7 +16,7 @@ const AuthModal = () => {
         
         <button
           onClick={loginWithGoogle}
-          className="w-full bg-white text-black font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-3 transition-transform hover:scale-105 active:scale-95"
+          className="w-full bg-white text-black font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-3 transition-transform hover:scale-105 active:scale-95 mb-4"
         >
           <svg className="w-5 h-5" viewBox="0 0 24 24">
             <path
@@ -37,6 +37,13 @@ const AuthModal = () => {
             />
           </svg>
           Continuar com Google
+        </button>
+
+        <button
+          onClick={loginAnonymously}
+          className="w-full bg-transparent border border-zinc-600 text-zinc-400 font-semibold py-3 px-4 rounded-xl transition-colors hover:bg-zinc-800 hover:text-white"
+        >
+          Continuar sem login
         </button>
       </div>
     </div>

@@ -40,7 +40,7 @@ const Page = memo(forwardRef(({ pageNumber, width, height, folder, style, isWebt
                 </div>
             )}
 
-            <div className="absolute bottom-3 right-4 text-[9px] font-bold text-white/20 pointer-events-none z-10 uppercase tracking-tighter">
+            <div className="absolute bottom-3 right-4 text-[10px] font-bold text-white/20 pointer-events-none z-10 uppercase tracking-tighter" role="presentation" aria-hidden="true">
                 {pageNumber}
             </div>
         </div>

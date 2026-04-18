@@ -5,6 +5,9 @@ import { RouterProvider } from 'react-router-dom'
 import { router } from './router'
 import { registerSW } from 'virtual:pwa-register'
 
+// analytics helper (GA4)
+import { initAnalytics } from './analytics';
+
 // Register Service Worker for PWA
 if ('serviceWorker' in navigator) {
   const updateSW = registerSW({
@@ -18,6 +21,9 @@ if ('serviceWorker' in navigator) {
     },
   })
 }
+
+// initialize analytics (no-op if GA_ID missing)
+initAnalytics();
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

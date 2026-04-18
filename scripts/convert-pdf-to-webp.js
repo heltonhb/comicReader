@@ -25,6 +25,12 @@ async function convertPdfs() {
         fs.mkdirSync(VOLUMES_DIR, { recursive: true });
     }
 
+    // Define a local temp directory to avoid filling up the OS /tmp
+    const localTmp = path.resolve(__dirname, '../source_hqs/tmp');
+    if (!fs.existsSync(localTmp)) fs.mkdirSync(localTmp, { recursive: true });
+    process.env.MAGICK_TMPDIR = localTmp;
+    process.env.TMPDIR = localTmp;
+
     const files = fs.readdirSync(SOURCE_DIR).filter(f => f.endsWith('.pdf'));
 
     for (const file of files) {
@@ -45,21 +51,39 @@ async function convertPdfs() {
 
         const convert = fromPath(pdfPath, options);
 
-        // pdf2pic não retorna page count por padrão em fromPath bulk sem instanciar
-        // Usaremos uma abordagem para converter todas as páginas usando bulk
-        try {
-            const results = await convert.bulk(-1, false);
-            console.log(`✅ ${file}: ${results.length} páginas convertidas.`);
+        let pageNum = 1;
+        let successCount = 0;
 
-            // Gerar metadata.json
+        while (true) {
+            try {
+                console.log(`Processando página ${pageNum} de ${file}...`);
+                const result = await convert(pageNum, false);
+                if (!result || !result.name) {
+                    break;
+                }
+                successCount++;
+                pageNum++;
+            } catch (e) {
+                // Chegou ao final do PDF ou erro
+                console.log(`Fim do PDF ou erro na página ${pageNum}. Total convertido: ${successCount}`);
+                break;
+            }
+        }
+
+        // Gerar metadata.json
+        if (successCount > 0) {
             fs.writeFileSync(
                 path.join(volumePath, 'metadata.json'),
-                JSON.stringify({ numPages: results.length, id: volumeId }, null, 2)
+                JSON.stringify({ numPages: successCount, id: volumeId }, null, 2)
             );
-        } catch (e) {
-            console.error(`Erro ao converter ${file}:`, e);
+            console.log(`✅ ${file}: ${successCount} páginas convertidas com sucesso.`);
         }
     }
+
+    // Limpar temp local
+    try {
+        fs.rmSync(localTmp, { recursive: true, force: true });
+    } catch (e) { }
 
     console.log("Conversão finalizada!");
 }

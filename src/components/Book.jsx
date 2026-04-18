@@ -143,8 +143,6 @@ const Book = ({ volume, onBack }) => {
         resetControls: resetTimeout,
     });
 
-    // Removed PDF callbacks as react-pdf is no longer used
-
     const onFlip = useCallback((e) => {
         const newPage = e.data;
         setCurrentPage(newPage);

@@ -1,5 +1,5 @@
 import React, { memo, useState } from 'react';
-import { Document, Page as PdfPage } from 'react-pdf';
+
 import { Virtuoso } from 'react-virtuoso';
 import { X, ChevronRight, LayoutGrid, List } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -25,17 +25,9 @@ const ThumbnailItem = memo(({ pageNumber, isActive, onClick, folder }) => {
                     loading="lazy"
                 />
             ) : (
-                <PdfPage
-                    pageNumber={pageNumber}
-                    width={THUMB_WIDTH}
-                    renderAnnotationLayer={false}
-                    renderTextLayer={false}
-                    loading={
-                        <div className="w-full h-full bg-surface flex items-center justify-center">
-                            <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-primary"></div>
-                        </div>
-                    }
-                />
+                <div className="w-full h-full bg-black flex items-center justify-center text-white/50 text-[10px] text-center p-2">
+                    Sem miniatura
+                </div>
             )}
             <div className={`absolute bottom-0 inset-x-0 py-1 text-center text-[10px] font-bold ${isActive ? 'bg-primary text-white' : 'bg-black/60 text-white/70'
                 }`}>
@@ -49,7 +41,7 @@ ThumbnailItem.displayName = 'ThumbnailItem';
 
 import { useReaderStore } from '../store/useReaderStore';
 
-const ThumbnailDrawer = ({ file, numPages, currentPage, chapters, onPageSelect, folder }) => {
+const ThumbnailDrawer = ({ numPages, currentPage, chapters, onPageSelect, folder }) => {
     const { showThumbnails, setShowThumbnails } = useReaderStore();
     const [activeTab, setActiveTab] = useState('thumbnails'); // 'thumbnails' | 'chapters'
 
@@ -132,25 +124,9 @@ const ThumbnailDrawer = ({ file, numPages, currentPage, chapters, onPageSelect, 
                                             )}
                                         />
                                     ) : (
-                                        <Document file={file} loading={null} className="h-full">
-                                            <Virtuoso
-                                                style={{ height: '100%' }}
-                                                totalCount={numPages}
-                                                initialTopMostItemIndex={Math.max(0, currentPage - 1)}
-                                                itemContent={(index) => (
-                                                    <div className="pb-3 flex justify-center">
-                                                        <ThumbnailItem
-                                                            pageNumber={index + 1}
-                                                            isActive={currentPage === index}
-                                                            onClick={(page) => {
-                                                                onPageSelect(page);
-                                                                if (window.innerWidth < 768) handleClose();
-                                                            }}
-                                                        />
-                                                    </div>
-                                                )}
-                                            />
-                                        </Document>
+                                        <div className="h-full w-full bg-black flex items-center justify-center text-white/50 text-xs">
+                                            Sem pasta vinculada
+                                        </div>
                                     )}
                                 </>
                             ) : (

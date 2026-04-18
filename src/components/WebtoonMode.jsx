@@ -1,16 +1,17 @@
 import React, { useRef, useEffect, memo } from 'react';
-import { Document } from 'react-pdf';
 import { Virtuoso } from 'react-virtuoso';
 import Page from './Page';
 
-const WebtoonPage = memo(({ pageNumber, width, folder, pdfDimensions }) => {
+const WebtoonPage = memo(({ pageNumber, width, height, folder, pdfDimensions }) => {
     return (
-        <div className="w-full flex justify-center">
+        <div className="w-full flex justify-center m-0 p-0 leading-none">
             <Page
                 pageNumber={pageNumber}
                 width={width}
+                height={height}
                 folder={folder}
                 pdfDimensions={pdfDimensions}
+                isWebtoon={true}
             />
         </div>
     );
@@ -20,13 +21,15 @@ WebtoonPage.displayName = 'WebtoonPage';
 
 import { useReaderStore } from '../store/useReaderStore';
 
-const WebtoonMode = ({ file, numPages, currentPage, onPageChange, containerWidth, onBack, folder }) => {
+const WebtoonMode = ({ numPages, currentPage, onPageChange, containerWidth, onBack, folder }) => {
     const { pdfDimensions } = useReaderStore();
     const virtuosoRef = useRef(null);
     const isScrollingRef = useRef(false);
 
-    // Page width: fill container for maximum screen usage
-    const pageWidth = Math.min(containerWidth, 800);
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+    // Page width: fill container completely on mobile to be edge-to-edge
+    const pageWidth = isMobile ? containerWidth : Math.min(containerWidth, 800);
+    const pageHeight = pdfDimensions?.aspectRatio ? pageWidth / pdfDimensions.aspectRatio : pageWidth * 1.5;
 
     // Sync external currentPage change
     useEffect(() => {
@@ -67,10 +70,11 @@ const WebtoonMode = ({ file, numPages, currentPage, onPageChange, containerWidth
                 )
             }}
             itemContent={(index) => (
-                <div className="flex flex-col items-center">
+                <div className="flex flex-col items-center m-0 p-0 leading-none">
                     <WebtoonPage
                         pageNumber={index + 1}
                         width={pageWidth}
+                        height={pageHeight}
                         folder={folder}
                         pdfDimensions={pdfDimensions}
                     />
@@ -81,22 +85,7 @@ const WebtoonMode = ({ file, numPages, currentPage, onPageChange, containerWidth
 
     return (
         <div className="w-full h-full bg-gray-950">
-            {folder ? (
-                renderList()
-            ) : (
-                <Document
-                    file={file}
-                    loading={
-                        <div className="flex flex-col items-center justify-center text-white h-screen w-full gap-4">
-                            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-                            <div className="text-sm font-light text-text-secondary animate-pulse">Carregando HQ...</div>
-                        </div>
-                    }
-                    className="w-full h-full"
-                >
-                    {renderList()}
-                </Document>
-            )}
+            {folder && renderList()}
         </div>
     );
 };

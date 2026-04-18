@@ -1,12 +1,11 @@
 import React from 'react';
 import { X } from 'lucide-react';
-import { Document } from 'react-pdf';
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import Page from './Page';
 
 import { useReaderStore } from '../store/useReaderStore';
 
-const ZoomOverlay = ({ file, folder, pageNumber, width, showControls }) => {
+const ZoomOverlay = ({ folder, pageNumber, showControls }) => {
     const { toggleZoom } = useReaderStore();
     const content = (
         <TransformWrapper
@@ -20,18 +19,11 @@ const ZoomOverlay = ({ file, folder, pageNumber, width, showControls }) => {
                 wrapperClass="!w-full !h-full flex items-center justify-center"
                 contentClass="flex items-center justify-center"
             >
-                {folder ? (
+                {folder && (
                     <img
                         src={`${folder}/page.${pageNumber}.webp`}
                         alt={`Página ${pageNumber}`}
                         className="max-w-full max-h-screen object-contain pointer-events-none"
-                    />
-                ) : (
-                    <Page
-                        pageNumber={pageNumber}
-                        width={width}
-                        folder={folder}
-                        disableInternalZoom={true}
                     />
                 )}
             </TransformComponent>
@@ -50,23 +42,10 @@ const ZoomOverlay = ({ file, folder, pageNumber, width, showControls }) => {
                 </button>
             </div>
 
-            {folder ? (
+            {folder && (
                 <div className="flex items-center justify-center h-full w-full">
                     {content}
                 </div>
-            ) : (
-                <Document
-                    file={file}
-                    loading={
-                        <div className="flex flex-col items-center justify-center text-white h-full w-full gap-4">
-                            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-                            <div className="text-sm font-light text-blue-200">Carregando alta resolução...</div>
-                        </div>
-                    }
-                    className="flex items-center justify-center h-full w-full"
-                >
-                    {content}
-                </Document>
             )}
 
             <div className="absolute bottom-8 text-white/50 text-sm font-medium pointer-events-none">

@@ -26,6 +26,6 @@
 - **Plan 3.3:** Dropzone for mass file upload to Firebase Storage.
 
 **Plan list:**
-- [ ] 03-01-PLAN.md — Route protection with admin checks
-- [ ] 03-02-PLAN.md — Cataloging form
-- [ ] 03-03-PLAN.md — Dropzone upload
+- [x] 03-01-PLAN.md — Route protection with admin checks
+- [x] 03-02-PLAN.md — Cataloging form
+- [x] 03-03-PLAN.md — Dropzone upload

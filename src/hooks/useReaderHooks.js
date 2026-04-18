@@ -112,18 +112,9 @@ export function useBookDimensions(pdfDimensions) {
                 singleHeight = availableHeight - PROGRESS_BAR_HEIGHT;
             }
         } else if (isMobileLandscape) {
-            // Mobile landscape: prioritize height
+            // Mobile landscape: full edge-to-edge (ignore aspect ratio)
+            singleWidth = availableWidth;
             singleHeight = availableHeight - PROGRESS_BAR_HEIGHT;
-            if (enforceAspectRatio) {
-                singleWidth = singleHeight * pdfDimensions.aspectRatio;
-                // Don't exceed available width
-                if (singleWidth > availableWidth) {
-                    singleWidth = availableWidth;
-                    singleHeight = singleWidth / pdfDimensions.aspectRatio;
-                }
-            } else {
-                singleWidth = availableWidth;
-            }
         } else if (isTablet && isPortrait) {
             // Tablet portrait: slight padding
             singleWidth = availableWidth - TABLET_PADDING;

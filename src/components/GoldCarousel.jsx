@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Suspense, lazy } from 'react';
+import React, { useState, Suspense, lazy } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, X, BookOpen, Search } from 'lucide-react';
 
@@ -14,7 +14,7 @@ const THEME = {
 };
 
 // Reused Thumbnail Component
-const VolumeThumbnail = React.memo(({ file, folder, volumeId }) => {
+const VolumeThumbnail = React.memo(({ file, folder }) => {
     return (
         <Suspense fallback={<div className="w-full h-full bg-white/5 animate-pulse" />}>
             <PdfThumbnail file={file} folder={folder} />
@@ -107,9 +107,6 @@ const GoldCarousel = ({ volumes, activeIndex, setActiveIndex, onSelect, onClose 
                     <h1 className="uppercase tracking-[0.3em] text-2xl font-bold leading-none text-[#D4AF37]">
                         Gibiteca
                     </h1>
-                    <h1 className="uppercase tracking-[0.3em] text-2xl font-bold leading-none text-[#D4AF37]">
-                        Ensina Mais
-                    </h1>
                 </div>
             </header>
 
@@ -134,32 +131,34 @@ const GoldCarousel = ({ volumes, activeIndex, setActiveIndex, onSelect, onClose 
                     if (clientStartX !== null) checkSwipe();
                 }}
             >
-                {/* Nav Click Areas (Invisible but functional) */}
-                <button
-                    className="absolute inset-y-0 left-0 w-1/4 z-30 opacity-0 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white/50"
-                    onClick={prevVolume}
-                    onKeyDown={(e) => e.key === 'Enter' || e.key === ' ' ? prevVolume() : null}
-                    aria-label="Volume anterior"
-                    type="button"
-                />
-                <button
-                    className="absolute inset-y-0 right-0 w-1/4 z-30 opacity-0 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white/50"
-                    onClick={nextVolume}
-                    onKeyDown={(e) => e.key === 'Enter' || e.key === ' ' ? nextVolume() : null}
-                    aria-label="Próximo volume"
-                    type="button"
-                />
+                {volumes.length > 1 && (
+                    <>
+                        <button
+                            className="absolute inset-y-0 left-0 w-1/4 z-30 opacity-0 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white/50"
+                            onClick={prevVolume}
+                            onKeyDown={(e) => e.key === 'Enter' || e.key === ' ' ? prevVolume() : null}
+                            aria-label="Volume anterior"
+                            type="button"
+                        />
+                        <button
+                            className="absolute inset-y-0 right-0 w-1/4 z-30 opacity-0 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white/50"
+                            onClick={nextVolume}
+                            onKeyDown={(e) => e.key === 'Enter' || e.key === ' ' ? nextVolume() : null}
+                            aria-label="Próximo volume"
+                            type="button"
+                        />
+                    </>
+                )}
 
                 <AnimatePresence initial={false}>
                     {volumes.map((volume, index) => {
                         const style = getCardStyle(index);
-                        const isCenter = style.zIndex === 20;
                         if (style.opacity === 0) return null;
 
                         return (
                             <motion.div
                                 key={volume.id}
-                                className={`absolute w-56 sm:w-64 aspect-[9/16] cursor-pointer`}
+                                className={`absolute w-72 sm:w-96 aspect-[16/9] cursor-pointer`}
                                 style={{ zIndex: style.zIndex, perspective: 1500 }}
                                 initial={{ opacity: 0, scale: 0.5 }}
                                 animate={{
@@ -193,7 +192,7 @@ const GoldCarousel = ({ volumes, activeIndex, setActiveIndex, onSelect, onClose 
                                     {/* Left Side (Spine) */}
                                     <div className="absolute inset-y-0 left-0 w-[30px] bg-[#1a1a1a] flex items-center justify-center border-l border-white/10 shadow-inner"
                                         style={{ transform: 'translateX(-15px) rotateY(-90deg)' }}>
-                                        <span className="text-white/20 font-bold tracking-widest text-[8px] transform -rotate-90 whitespace-nowrap">ENSINA MAIS</span>
+                                        <span className="text-white/20 font-bold tracking-widest text-[8px] transform -rotate-90 whitespace-nowrap">GIBITECA</span>
                                     </div>
 
                                     {/* Right Side (Pages) */}
@@ -220,7 +219,7 @@ const GoldCarousel = ({ volumes, activeIndex, setActiveIndex, onSelect, onClose 
                                             transform: 'translateZ(15px)',
                                             boxShadow: style.isCenter ? 'inset 0 0 0 1px rgba(255,255,255,0.2)' : 'inset 0 0 0 1px rgba(255,255,255,0.1)'
                                         }}>
-                                        <VolumeThumbnail file={volume.file} folder={volume.folder} volumeId={volume.id} />
+                                        <VolumeThumbnail file={volume.file} folder={volume.folder} />
                                         {/* Spine hinge overlay */}
                                         <div className="absolute inset-y-0 left-0 w-4 bg-gradient-to-r from-black/60 to-transparent pointer-events-none" />
                                         <div className="absolute inset-y-0 left-[1px] w-[1px] bg-white/30 pointer-events-none" />
@@ -275,14 +274,16 @@ const GoldCarousel = ({ volumes, activeIndex, setActiveIndex, onSelect, onClose 
                 })()}
 
                 {/* Pagination Dots */}
-                <div className="flex gap-2 justify-center">
-                    {volumes.map((_, idx) => (
-                        <div
-                            key={idx}
-                            className={`size-1.5 rounded-full transition-colors ${idx === activeIndex ? 'bg-[#8B0000]' : 'bg-white/20'}`}
-                        />
-                    ))}
-                </div>
+                {volumes.length > 1 && (
+                    <div className="flex gap-2 justify-center">
+                        {volumes.map((_, idx) => (
+                            <div
+                                key={idx}
+                                className={`size-1.5 rounded-full transition-colors ${idx === activeIndex ? 'bg-[#8B0000]' : 'bg-white/20'}`}
+                            />
+                        ))}
+                    </div>
+                )}
             </div>
 
         </div>

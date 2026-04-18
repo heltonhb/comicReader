@@ -4,6 +4,9 @@ import { VOLUMES } from '../volumes';
 import { useFullscreen } from '../hooks/useReaderHooks';
 import GoldCarousel from './GoldCarousel';
 
+// analytics
+import { trackEvent } from '../analytics';
+
 const VolumeSelector = () => {
     const navigate = useNavigate();
     const { enterFullscreen } = useFullscreen();
@@ -26,10 +29,16 @@ const VolumeSelector = () => {
     }, [activeIndex]);
 
     const handleSelect = useCallback((volume) => {
-        enterFullscreen();
-        setTimeout(() => {
-            navigate(`/read/${volume.id}`);
-        }, 150);
+        if (volume?.id && volume?.title) {
+            trackEvent('select_volume', { volume_id: volume.id, title: volume.title });
+        }
+
+        if (volume?.id) {
+            enterFullscreen();
+            setTimeout(() => {
+                navigate(`/read/${volume.id}`);
+            }, 150);
+        }
     }, [navigate, enterFullscreen]);
 
     // Handle Exit

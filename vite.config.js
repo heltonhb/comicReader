@@ -11,7 +11,6 @@ export default defineConfig({
         manualChunks: {
           vendor: ['react', 'react-dom', 'react-router-dom'],
           firebase: ['firebase/app', 'firebase/auth', 'firebase/firestore'],
-          pdfjs: ['pdfjs-dist', 'react-pdf'],
           pageflip: ['react-pageflip'],
           ui: ['framer-motion', 'lucide-react']
         }
@@ -57,28 +56,24 @@ export default defineConfig({
         ]
       },
       manifest: {
-        name: 'Ensina Mais HQ',
-        short_name: 'EnsinaMaisHQ',
-        description: 'Aprenda com histórias em quadrinhos interativas de Matemática, Português e Tecnologia.',
-        theme_color: '#111827',
-        background_color: '#111827',
+        name: 'Gibiteca HQ',
+        short_name: 'GibitecaHQ',
+        description: 'Histórias em quadrinhos interativas.',
+        theme_color: '#000000',
+        background_color: '#000000',
         display: 'standalone',
-        orientation: 'portrait',
+        orientation: 'landscape',
         icons: [
           {
             src: 'pwa-192x192.png',
             sizes: '192x192',
-            type: 'image/png'
+            type: 'image/png',
+            purpose: 'any maskable'
           },
           {
             src: 'pwa-512x512.png',
             sizes: '512x512',
-            type: 'image/png'
-          },
-          {
-            src: 'icon.svg',
-            sizes: 'any',
-            type: 'image/svg+xml',
+            type: 'image/png',
             purpose: 'any maskable'
           }
         ]

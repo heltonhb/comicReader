@@ -1,10 +1,6 @@
 import React from 'react';
-import { Document, Page as PdfPage, pdfjs } from 'react-pdf';
 
-// Configure worker globally to avoid reload/freeze issues for lazy-loaded PDF components
-pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
-
-const PdfThumbnail = React.memo(({ file, folder }) => {
+const PdfThumbnail = React.memo(({ folder }) => {
     return (
         <div className="w-full h-full relative">
             {folder ? (
@@ -23,19 +19,9 @@ const PdfThumbnail = React.memo(({ file, folder }) => {
                     />
                 </div>
             ) : (
-                <Document
-                    file={file}
-                    className="w-full h-full"
-                    loading={<div className="w-full h-full bg-white/5 animate-pulse" />}
-                >
-                    <PdfPage
-                        pageNumber={1}
-                        width={320}
-                        renderTextLayer={false}
-                        renderAnnotationLayer={false}
-                        className="w-full h-full object-cover"
-                    />
-                </Document>
+                <div className="w-full h-full bg-zinc-900 flex items-center justify-center text-zinc-500 text-xs">
+                    <span className="uppercase tracking-widest">Sem capa</span>
+                </div>
             )}
             {/* Subtle gloss overlay */}
             <div className="absolute inset-0 bg-gradient-to-tr from-black/40 via-transparent to-white/10 pointer-events-none" />

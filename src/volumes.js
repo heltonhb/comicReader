@@ -1,30 +1,24 @@
 /**
  * Registry of available HQ volumes.
- * Add new volumes by appending to this array.
  */
 export const VOLUMES = [
     {
         id: 'vol-1',
-        title: 'Volume 1 — Matemática',
-        file: '/Matematica_final.pdf',
-        folder: '/volumes/matematica',
+        title: 'Primeira Guerra Mundial',
+        file: '/primeiraguerra_final.pdf',
+        folder: '/volumes/primeiraguerra',
     },
     {
         id: 'vol-2',
-        title: 'Volume 2 — Português',
-        file: '/Portugues_final.pdf',
-        folder: '/volumes/portugues',
+        title: 'Segunda Guerra Mundial',
+        file: '/segundaguerra_final.pdf',
+        folder: '/volumes/segundaguerra',
     },
     {
         id: 'vol-3',
-        title: 'Volume 3 — Programação',
-        file: '/Tech_final.pdf',
-        folder: '/volumes/tech',
+        title: 'Stalingrado',
+        file: '/stalingrado_final.pdf',
+        folder: '/volumes/stalingrado',
     },
-    {
-        id: 'vol-4',
-        title: 'Volume 4 — Robótica',
-        file: '/Robotica_final.pdf',
-        folder: '/volumes/robotica',
-    }
 ];
+

@@ -17,50 +17,49 @@ const ReaderControls = ({
         <AnimatePresence>
             {showControls && (
                 <motion.div
-                    initial={{ opacity: 0, y: 40, x: '-50%' }}
+                    initial={{ opacity: 0, y: 8, x: '-50%' }}
                     animate={{ opacity: 1, y: 0, x: '-50%' }}
-                    exit={{ opacity: 0, y: 40, x: '-50%' }}
-                    transition={{ duration: 0.3 }}
-                    className="fixed bottom-4 sm:bottom-8 left-1/2 z-50 w-auto"
+                    exit={{ opacity: 0, y: 8, x: '-50%' }}
+                    transition={{ duration: 0.4, ease: 'easeOut' }}
+                    className="fixed bottom-3 sm:bottom-6 left-1/2 z-50 w-auto"
                 >
-                    <div className="flex items-center gap-1 sm:gap-2 px-2 sm:px-2 py-1 rounded-full">
+                    {/* Completely transparent wrapper */}
+                    <div className="flex items-center gap-2 sm:gap-4 px-2 py-1 bg-transparent">
 
                         {/* Back Button */}
                         <button
                             onClick={onBack}
-                            className="flex items-center justify-center p-1.5 text-white/30 hover:text-white transition-all active:scale-90"
+                            className="flex items-center justify-center p-2 text-white/30 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] hover:text-white/90 active:text-white transition-all duration-200 active:scale-90 touch-manipulation"
                             title="Voltar"
                         >
-                            <ArrowLeft size={18} strokeWidth={2} />
+                            <ArrowLeft size={20} strokeWidth={2} />
                         </button>
-
-                        <div className="w-px h-5 bg-white/10 mx-0.5" />
 
                         {/* Thumbnails */}
                         <button
                             onClick={toggleThumbnails}
-                            className="p-1.5 text-white/30 hover:text-white transition-all active:scale-90"
+                            className="p-2 text-white/30 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] hover:text-white/90 active:text-white transition-all duration-200 active:scale-90 touch-manipulation"
                             title="Índice"
                         >
-                            <LayoutGrid size={18} />
+                            <LayoutGrid size={20} strokeWidth={2} />
                         </button>
 
                         {/* Reading Mode */}
                         <button
                             onClick={toggleReadingMode}
-                            className="p-1.5 text-white/30 hover:text-white transition-all active:scale-90"
+                            className="p-2 text-white/30 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] hover:text-white/90 active:text-white transition-all duration-200 active:scale-90 touch-manipulation"
                             title={readingMode === 'flipbook' ? 'Modo Vertical' : 'Modo HQ'}
                         >
-                            {readingMode === 'flipbook' ? <AlignJustify size={18} /> : <BookOpen size={18} />}
+                            {readingMode === 'flipbook' ? <AlignJustify size={20} strokeWidth={2} /> : <BookOpen size={20} strokeWidth={2} />}
                         </button>
 
                         {/* Fullscreen */}
                         <button
                             onClick={onToggleFullscreen}
-                            className="p-1.5 text-white/30 hover:text-white transition-all active:scale-90"
+                            className="hidden sm:flex p-2 text-white/30 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] hover:text-white/90 transition-all duration-200 active:scale-90"
                             title={isFullscreen ? "Sair da Tela Cheia" : "Tela Cheia"}
                         >
-                            {isFullscreen ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
+                            {isFullscreen ? <Minimize2 size={20} strokeWidth={2} /> : <Maximize2 size={20} strokeWidth={2} />}
                         </button>
 
                     </div>

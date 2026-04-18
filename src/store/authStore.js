@@ -16,7 +16,8 @@ export const useAuthStore = create((set) => ({
     try {
       await signInWithPopup(auth, googleProvider);
     } catch (error) {
-      console.error('Google login error:', error);
+      console.error('Google login error:', error.code, error.message);
+      alert(`Erro no login: ${error.message}`);
     }
   },
 
@@ -24,7 +25,8 @@ export const useAuthStore = create((set) => ({
     try {
       await signInAnonymously(auth);
     } catch (error) {
-      console.error('Anonymous login error:', error);
+      console.error('Anonymous login error:', error.code, error.message);
+      alert(`Erro no login anônimo: ${error.message}`);
     }
   },
 

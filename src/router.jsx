@@ -1,4 +1,4 @@
-/* eslint-disable react-refresh/only-export-components */
+ 
 import { createBrowserRouter } from 'react-router-dom';
 import React, { Suspense, lazy } from 'react';
 import App from './App';

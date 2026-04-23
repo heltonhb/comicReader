@@ -17,7 +17,7 @@ const ProgressBar = ({ currentPage, numPages, isMobile, showControls }) => {
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.4 }}
-                    className="absolute bottom-0 left-0 right-0 z-40 pointer-events-none mix-blend-difference text-white"
+                    className="absolute bottom-0 left-0 right-0 z-40 pointer-events-none text-white drop-shadow-md"
                 >
                     {isMobile ? (
                         /* Mobile: ultra-thin line only — zero text clutter */

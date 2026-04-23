@@ -12,6 +12,7 @@
     "convert-hqs": "node scripts/convert-pdf-to-webp.js"
   },
   "dependencies": {
+    "fast-average-color": "^9.5.2",
     "firebase": "^12.9.0",
     "framer-motion": "^12.33.0",
     "lucide-react": "^0.563.0",

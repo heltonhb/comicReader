@@ -1,5 +1,6 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { FastAverageColor } from 'fast-average-color';
 
 // analytics
 import { trackEvent } from '../analytics';
@@ -41,6 +42,10 @@ const Book = ({ volume, onBack }) => {
     const { isFullscreen, toggleFullScreen, enterFullscreen } = useFullscreen();
     const { currentPage, setCurrentPage, hasRestored } = useReadingProgress(volume.id);
     const { playPageTurnSound } = usePageTurnSound();
+
+    // Estado para cor de fundo (lógica do Reader.jsx)
+    const [isLightBackground, setIsLightBackground] = useState(false);
+
     // Persist total pages for progress display on VolumeSelector
     useEffect(() => {
         if (numPages) {
@@ -169,7 +174,26 @@ const Book = ({ volume, onBack }) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [numPages, hasRestored]);
 
+    // Analisa a cor da página atual para ajustar os controlos (lógica do Reader.jsx)
+    useEffect(() => {
+        if (!volume.folder || currentPage === undefined) return;
+        
+        const fac = new FastAverageColor();
+        const imageUrl = `${volume.folder}/page.${currentPage + 1}.webp`;
+        
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.onload = () => {
+            fac.getColorAsync(img)
+                .then(color => {
+                    setIsLightBackground(color.isLight);
+                })
+                .catch(e => console.error("Erro ao analisar cor da imagem:", e));
+        };
+        img.src = imageUrl;
 
+        return () => fac.destroy();
+    }, [volume.folder, currentPage]);
 
     return (
         <div className="reader-container flex flex-col items-center justify-center w-full h-full bg-background overflow-hidden relative" ref={containerRef}>
@@ -185,6 +209,7 @@ const Book = ({ volume, onBack }) => {
                 isFullscreen={isFullscreen}
                 onToggleFullscreen={toggleFullScreen}
                 onBack={onBack}
+                isLight={isLightBackground}
             />
 
             <AnimatePresence mode="wait">

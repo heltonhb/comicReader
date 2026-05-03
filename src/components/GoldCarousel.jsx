@@ -167,6 +167,11 @@ const GoldCarousel = ({ volumes, activeIndex, setActiveIndex, onSelect, onClose 
                                     opacity: style.opacity,
                                     filter: style.blur ? `blur(${style.blur}px)` : 'drop-shadow(0 20px 30px rgba(0,0,0,0.7))'
                                 }}
+                                whileHover={style.isCenter ? { 
+                                    scale: 1.02,
+                                    filter: 'drop-shadow(0 25px 40px rgba(212, 175, 55, 0.3))'
+                                } : {}}
+                                whileTap={style.isCenter ? { scale: 0.98 } : {}}
                                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
                                 onClick={() => style.isCenter ? onSelect(volume) : setActiveIndex(index)}
                                 onKeyDown={(e) => {

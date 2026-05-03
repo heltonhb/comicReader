@@ -1,0 +1,11 @@
+node_modules
+dist
+_bmad
+_bmad-output
+.firebase
+.github
+.source_hqs
+*.min.js
+package-lock.json
+pnpm-lock.yaml
+yarn.lock

@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { AnimatePresence, motion } from 'framer-motion';
 import ErrorBoundary from './components/ErrorBoundary';
 import AuthModal from './components/AuthModal';
 import { useAuthStore } from './store/authStore';
@@ -16,7 +17,6 @@ function App() {
     return () => unsubscribe();
   }, [initAuth]);
 
-  // fire a page_view event on route change
   useEffect(() => {
     trackEvent('page_view', { path: location.pathname });
   }, [location.pathname]);
@@ -25,7 +25,18 @@ function App() {
     <div className="App w-full h-[100dvh] overflow-hidden bg-background touch-none overscroll-none relative">
       <ErrorBoundary>
         {!user && <AuthModal />}
-        <Outlet />
+        <AnimatePresence mode="wait">
+          <motion.main
+            key={location.pathname}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2, ease: "easeInOut" }}
+            className="w-full h-full"
+          >
+            <Outlet />
+          </motion.main>
+        </AnimatePresence>
       </ErrorBoundary>
     </div>
   );

@@ -13,33 +13,43 @@ const ProgressBar = ({ currentPage, numPages, isMobile, showControls }) => {
         <AnimatePresence>
             {showControls && (
                 <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.4 }}
-                    className="absolute bottom-0 left-0 right-0 z-40 pointer-events-none text-white drop-shadow-md"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    transition={{ duration: 0.3 }}
+                    className="absolute bottom-0 left-0 right-0 z-40 pointer-events-none"
                 >
                     {isMobile ? (
-                        /* Mobile: ultra-thin line only — zero text clutter */
-                        <div className="w-full h-[1.5px] bg-white/20">
-                            <div
-                                className="h-full bg-white transition-all duration-700 ease-out"
-                                style={{ width: `${progressPercent}%` }}
+                        <div className="w-full h-[3px] bg-white/10">
+                            <motion.div
+                                className="h-full bg-gradient-to-r from-gold via-gold-light to-gold"
+                                initial={{ width: 0 }}
+                                animate={{ width: `${progressPercent}%` }}
+                                transition={{ duration: 0.5, ease: "easeOut" }}
                             />
                         </div>
                     ) : (
-                        /* Desktop: slim bar + page count, well away from content */
-                        <div className="w-full px-8 pb-3">
-                            <div className="flex items-center gap-3">
-                                <div className="flex-1 h-[2px] bg-white/20 rounded-full overflow-hidden">
-                                    <div
-                                        className="h-full bg-white rounded-full transition-all duration-500 ease-out"
-                                        style={{ width: `${progressPercent}%` }}
+                        <div className="w-full px-8 pb-4">
+                            <div className="flex items-center gap-4">
+                                <div className="flex-1 h-[3px] bg-white/10 rounded-full overflow-hidden">
+                                    <motion.div
+                                        className="h-full bg-gradient-to-r from-gold via-gold-light to-gold rounded-full shadow-gold"
+                                        initial={{ width: 0 }}
+                                        animate={{ width: `${progressPercent}%` }}
+                                        transition={{ duration: 0.5, ease: "easeOut" }}
                                     />
                                 </div>
-                                <span className="text-[10px] font-medium whitespace-nowrap tabular-nums tracking-wide opacity-70">
-                                    {displayPage} / {numPages}
-                                </span>
+                                <motion.span 
+                                    className="text-xs font-medium whitespace-nowrap tabular-nums tracking-wider text-white/80"
+                                    key={displayPage}
+                                    initial={{ opacity: 0.5, scale: 0.9 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    transition={{ duration: 0.2 }}
+                                >
+                                    <span className="text-gold-light font-semibold">{displayPage}</span>
+                                    <span className="text-white/50 mx-1">/</span>
+                                    <span className="text-white/70">{numPages}</span>
+                                </motion.span>
                             </div>
                         </div>
                     )}

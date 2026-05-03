@@ -1,41 +1,44 @@
-# Stack
-_Last updated: 2026-04-16 (after Phase 2 — Responsive Reader)_
+# Stack - Gibiteca HQ
 
-## Core
-- **Frontend Framework:** React 18.3.1
-- **Language:** JavaScript (ES Modules, JSX) — no TypeScript
-- **Styling:** Tailwind CSS v3.4 + vanilla CSS (`index.css` for global resets and tokens)
-- **Animations:** Framer Motion 12 (AnimatePresence, motion.div, spring transitions)
-- **Icons:** Lucide React 0.563
+## Core Technologies
 
-## Key Libraries
-| Library | Version | Purpose |
-|---|---|---|
-| `react-pageflip` | 2.0.3 | HTML 3D page-flip engine (Flipbook mode) |
-| `react-zoom-pan-pinch` | 3.7.0 | Pinch-to-zoom, pan, double-tap, zoom reset |
-| `react-virtuoso` | 4.18.1 | Virtualised list rendering (Webtoon mode + ThumbnailDrawer) |
-| `react-router-dom` | 7.13 | SPA routing (`/` → VolumeSelector, `/read/:volumeId` → BookWrapper) |
-| `zustand` | 5.0.11 | Global state (authStore, useReaderStore) |
-| `use-resize-observer` | 9.1 | DOM resize tracking (fallback for ResizeObserver) |
-| `framer-motion` | 12.33 | Page transitions, drawer animations, control fade-in/out |
+| Technology | Version | Purpose |
+|------------|---------|---------|
+| React | 18.3.1 | UI Framework |
+| Vite | 7.2.4 | Build tool |
+| TypeScript | 5.8.3 | Type safety |
+| Zustand | 5.0.11 | State management |
+| Firebase | 12.9.0 | Auth & Storage |
+| Framer Motion | 12.33.0 | Animations |
+| react-pageflip | 2.0.3 | Flipbook effect |
+| react-virtuoso | 4.18.1 | Virtualization |
+| react-router-dom | 7.13.0 | Routing |
+| Tailwind CSS | 3.4.17 | Styling |
 
-## Backend / Services
-- **BaaS:** Firebase 12 (Auth + Firestore only — Storage not used)
-- **Analytics:** Google Analytics 4 via `gtag.js` (custom wrapper in `analytics.js`)
-- **Legacy:** Mixpanel listed in `package.json` but NOT used in current code — consider removing
+## Dev Tools
 
-## Tooling
 | Tool | Purpose |
-|---|---|
-| Vite 7.2 | Dev server + production bundler |
-| `@vitejs/plugin-react` | React Fast Refresh + JSX transform |
-| `vite-plugin-pwa` 1.2 | Service worker, manifest, runtime caching |
-| ESLint 9 | Linting with `eslint-plugin-react-hooks` + `react-refresh` |
-| `pdf2pic` 3.1 (dev) | Node.js script (`scripts/convert-pdf-to-webp.js`) to convert PDFs to WebP |
-| `autoprefixer` + `postcss` | CSS vendor prefixes |
+|------|---------|
+| Vitest | Testing |
+| ESLint 9 | Linting |
+| Prettier | Formatting |
+| Vite PWA | Offline support |
 
-## Build Chunks (manual Rollup splitting)
-- `vendor` → react, react-dom, react-router-dom
-- `firebase` → firebase/app, firebase/auth, firebase/firestore
-- `pageflip` → react-pageflip
-- `ui` → framer-motion, lucide-react
+## Dependencies Summary
+
+- **UI**: React 18, Framer Motion, Lucide React
+- **State**: Zustand (3 stores)
+- **Auth**: Firebase Auth (Google + Anonymous)
+- **Storage**: Firebase Storage
+- **Reading**: react-pageflip, react-zoom-pan-pinch
+- **Analytics**: Mixpanel, Google Analytics 4
+
+## Build Commands
+
+```
+npm run dev      # Development
+npm run build    # Production (converts PDFs first)
+npm run build:fast  # Skip PDF conversion
+npm run lint     # Linting
+npm run test     # Tests
+```

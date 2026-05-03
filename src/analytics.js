@@ -1,7 +1,8 @@
 // analytics.js
 // Simple wrapper for Google Analytics 4 (gtag) initialization and event tracking.
 
-const GA_ID = import.meta.env.VITE_GA_MEASUREMENT_ID;
+// eslint-disable-next-line no-undef
+const GA_ID = typeof import.meta !== 'undefined' ? import.meta?.env?.VITE_GA_MEASUREMENT_ID : undefined;
 
 // Load the gtag.js script and initialize dataLayer.  Call once on app startup.
 export function initAnalytics() {

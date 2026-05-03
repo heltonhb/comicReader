@@ -1,0 +1,18 @@
+[
+    {
+        "id": "hqs-vol-01",
+        "title": "HQ Volume 1",
+        "author": "Various",
+        "folder": "/volumes/hqs-vol-01",
+        "coverImage": "/volumes/hqs-vol-01/cover.webp",
+        "numPages": 120
+    },
+    {
+        "id": "hqs-vol-02",
+        "title": "HQ Volume 2",
+        "author": "Various",
+        "folder": "/volumes/hqs-vol-02",
+        "coverImage": "/volumes/hqs-vol-02/cover.webp",
+        "numPages": 118
+    }
+]

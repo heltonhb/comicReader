@@ -97,7 +97,10 @@ export const useBookController = (volume: Volume): UseBookControllerReturn => {
 
     const prevFlip = useCallback(() => {
         if (bookRef.current) {
-            bookRef.current.pageFlip().flipPrev('bottom');
+            const pageFlip = bookRef.current.pageFlip();
+            const current = pageFlip.getCurrentPageIndex();
+            console.log('prevFlip called, current page:', current);
+            pageFlip.flipPrev('bottom');
         }
     }, []);
 

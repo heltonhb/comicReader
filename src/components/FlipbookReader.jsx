@@ -109,6 +109,18 @@ const FlipbookReader = ({
             }}
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
+            onClick={(e) => {
+                if (isMobile) {
+                    const rect = e.currentTarget.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const width = rect.width;
+                    if (x < width * 0.3) {
+                        onPrev?.();
+                    } else if (x > width * 0.7) {
+                        onNext?.();
+                    }
+                }
+            }}
         >
             <TransformWrapper
                 initialScale={1}

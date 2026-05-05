@@ -74,17 +74,18 @@ const ReaderControls = ({
                     className="fixed bottom-6 left-1/2 z-50"
                 >
                     <div className={`
-                        flex items-center gap-1 px-4 py-2.5 rounded-2xl 
+                        flex items-center gap-1 px-4 py-3 rounded-2xl 
                         ${theme.bg} ${theme.border} ${theme.text}
                         shadow-elevated
+                        sm:py-2.5
                     `}>
                         <Tooltip text="Voltar">
                             <button 
-                                onClick={() => { console.log('Voltar clicked'); onBack?.(); }} 
-                                className="p-2.5 hover:bg-white/10 rounded-xl transition-all duration-200 active:scale-95 touch-manipulation"
-                                style={{ touchAction: 'manipulation' }}
+                                onClick={() => { console.log('🔙 Voltar clicked'); onBack?.(); }} 
+                                className="p-3 sm:p-2.5 hover:bg-white/10 rounded-xl transition-all duration-200 active:scale-95 touch-manipulation"
+                                style={{ touchAction: 'manipulation', WebkitTapHighlightColor: 'transparent' }}
                             >
-                                <ArrowLeft size={20} strokeWidth={2.5} />
+                                <ArrowLeft size={24} strokeWidth={2.5} className="sm:w-5 sm:h-5" />
                             </button>
                         </Tooltip>
 

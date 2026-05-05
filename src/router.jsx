@@ -1,5 +1,5 @@
  
-import { createBrowserRouter } from 'react-router-dom';
+import { createHashRouter } from 'react-router-dom';
 import React, { Suspense, lazy } from 'react';
 import App from './App';
 import VolumeSelector from './components/VolumeSelector';
@@ -20,7 +20,7 @@ const BookLoader = () => (
     </div>
 );
 
-export const router = createBrowserRouter([
+export const router = createHashRouter([
     {
         path: '/',
         element: <App />,

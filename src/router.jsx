@@ -7,6 +7,7 @@ import AdminRoute from './components/AdminRoute';
 
 const BookWrapper = lazy(() => import('./components/BookWrapper'));
 const AdminPanel = lazy(() => import('./components/AdminPanel'));
+const Library = lazy(() => import('./components/Library'));
 
 // Component for full screen loading fallback
 const BookLoader = () => (
@@ -27,6 +28,14 @@ export const router = createBrowserRouter([
             {
                 path: '/',
                 element: <VolumeSelector />,
+            },
+            {
+                path: '/library',
+                element: (
+                    <Suspense fallback={<BookLoader />}>
+                        <Library />
+                    </Suspense>
+                ),
             },
             {
                 path: '/read/:volumeId',

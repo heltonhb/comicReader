@@ -1,6 +1,7 @@
 import React, { useState, Suspense, lazy } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronLeft, ChevronRight, X, BookOpen, Search } from 'lucide-react';
+import { ChevronLeft, ChevronRight, X, BookOpen, Search, Library } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { CATEGORIES } from '../volumes';
 
 const PdfThumbnail = lazy(() => import('./PdfThumbnail'));
@@ -24,6 +25,7 @@ const VolumeThumbnail = React.memo(({ file, folder }) => {
 });
 
 const GoldCarousel = ({ volumes, activeIndex, setActiveIndex, onSelect, onClose }) => {
+    const navigate = useNavigate();
     const [activeCategory, setActiveCategory] = useState(null);
 
     const filteredVolumes = activeCategory 
@@ -151,6 +153,15 @@ const GoldCarousel = ({ volumes, activeIndex, setActiveIndex, onSelect, onClose 
                         Gibiteca
                     </h1>
                 </div>
+
+                {/* Library Button */}
+                <button
+                    onClick={() => navigate('/library')}
+                    className="absolute left-6 top-1/2 -translate-y-1/2 flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-full text-sm text-white/80 hover:text-white transition-colors"
+                >
+                    <Library size={18} />
+                    Biblioteca
+                </button>
             </header>
 
             {/* Carousel Track */}

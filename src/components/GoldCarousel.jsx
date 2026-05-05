@@ -1,6 +1,7 @@
 import React, { useState, Suspense, lazy } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, X, BookOpen, Search } from 'lucide-react';
+import { CATEGORIES } from '../volumes';
 
 const PdfThumbnail = lazy(() => import('./PdfThumbnail'));
 
@@ -23,10 +24,19 @@ const VolumeThumbnail = React.memo(({ file, folder }) => {
 });
 
 const GoldCarousel = ({ volumes, activeIndex, setActiveIndex, onSelect, onClose }) => {
+    const [activeCategory, setActiveCategory] = useState(null);
+
+    const filteredVolumes = activeCategory 
+        ? volumes.filter(v => v.category === activeCategory)
+        : volumes;
+
+    const currentIndex = filteredVolumes.length > 0 
+        ? activeIndex % filteredVolumes.length 
+        : 0;
 
     const getCardStyle = (index) => {
-        const length = volumes.length;
-        let offset = (index - activeIndex + length) % length;
+        const length = filteredVolumes.length;
+        let offset = (index - currentIndex + length) % length;
         if (offset > length / 2) offset -= length;
 
         const isCenter = offset === 0;
@@ -64,8 +74,14 @@ const GoldCarousel = ({ volumes, activeIndex, setActiveIndex, onSelect, onClose 
         return { x, rotateY, scale, opacity, zIndex, blur, isCenter };
     };
 
-    const nextVolume = () => setActiveIndex((prev) => (prev + 1) % volumes.length);
-    const prevVolume = () => setActiveIndex((prev) => (prev - 1 + volumes.length) % volumes.length);
+    const nextVolume = () => {
+        if (filteredVolumes.length <= 1) return;
+        setActiveIndex((prev) => (prev + 1) % filteredVolumes.length);
+    };
+    const prevVolume = () => {
+        if (filteredVolumes.length <= 1) return;
+        setActiveIndex((prev) => (prev - 1 + filteredVolumes.length) % filteredVolumes.length);
+    };
 
     const [clientStartX, setClientStartX] = useState(null);
     const [clientEndX, setClientEndX] = useState(null);
@@ -90,6 +106,33 @@ const GoldCarousel = ({ volumes, activeIndex, setActiveIndex, onSelect, onClose 
 
             {/* Header */}
             <header className="flex flex-col items-center justify-center pt-8 pb-4 z-30 relative">
+                {/* Category Filter */}
+                <div className="absolute left-6 top-8 flex gap-2 flex-wrap max-w-[300px]">
+                    <button
+                        onClick={() => setActiveCategory(null)}
+                        className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${
+                            activeCategory === null 
+                                ? 'bg-[#D4AF37] text-gray-900' 
+                                : 'bg-white/10 text-white/60 hover:bg-white/20'
+                        }`}
+                    >
+                        Todos
+                    </button>
+                    {CATEGORIES.filter(cat => volumes.some(v => v.category === cat.id)).map(cat => (
+                        <button
+                            key={cat.id}
+                            onClick={() => setActiveCategory(cat.id)}
+                            className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${
+                                activeCategory === cat.id 
+                                    ? 'bg-[#D4AF37] text-gray-900' 
+                                    : 'bg-white/10 text-white/60 hover:bg-white/20'
+                            }`}
+                        >
+                            {cat.icon} {cat.name}
+                        </button>
+                    ))}
+                </div>
+
                 <div className="absolute right-6 top-8">
                     <button
                         onClick={onClose}
@@ -131,7 +174,7 @@ const GoldCarousel = ({ volumes, activeIndex, setActiveIndex, onSelect, onClose 
                     if (clientStartX !== null) checkSwipe();
                 }}
             >
-                {volumes.length > 1 && (
+                {filteredVolumes.length > 1 && (
                     <>
                         <button
                             className="absolute inset-y-0 left-0 w-1/4 z-30 opacity-0 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white/50"
@@ -151,7 +194,7 @@ const GoldCarousel = ({ volumes, activeIndex, setActiveIndex, onSelect, onClose 
                 )}
 
                 <AnimatePresence initial={false}>
-                    {volumes.map((volume, index) => {
+                    {filteredVolumes.map((volume, index) => {
                         const style = getCardStyle(index);
                         if (style.opacity === 0) return null;
 
@@ -243,7 +286,7 @@ const GoldCarousel = ({ volumes, activeIndex, setActiveIndex, onSelect, onClose 
                     return (
                         <>
                             <button
-                                onClick={() => onSelect(volumes[activeIndex])}
+                                onClick={() => onSelect(filteredVolumes[currentIndex])}
                                 className="pointer-events-auto flex flex-col items-center justify-center size-28 rounded-full border-2 border-white/10 transition-transform active:scale-95 hover:scale-105 mb-6"
                                 style={{
                                     background: 'radial-gradient(circle at center, rgba(178, 34, 34, 0.5), rgba(128, 0, 0, 0.5))',
@@ -261,7 +304,7 @@ const GoldCarousel = ({ volumes, activeIndex, setActiveIndex, onSelect, onClose 
                                 <p className="text-[#ff0000] text-xs font-bold tracking-widest uppercase mb-1 opacity-80">HQ Interativa</p>
                                 <h3 className="text-xl font-light text-[#fbbf24] tracking-wide drop-shadow-[0_0_8px_rgba(251,191,36,0.4)]">
                                     {(() => {
-                                        const parts = volumes[activeIndex]?.title.split('—').map(s => s.trim());
+                                        const parts = filteredVolumes[currentIndex]?.title.split('—').map(s => s.trim());
                                         if (!parts) return null;
                                         return (
                                             <>
@@ -279,9 +322,9 @@ const GoldCarousel = ({ volumes, activeIndex, setActiveIndex, onSelect, onClose 
                 })()}
 
                 {/* Pagination Dots */}
-                {volumes.length > 1 && (
+                {filteredVolumes.length > 1 && (
                     <div className="flex gap-2 justify-center">
-                        {volumes.map((_, idx) => (
+                        {filteredVolumes.map((_, idx) => (
                             <div
                                 key={idx}
                                 className={`size-1.5 rounded-full transition-colors ${idx === activeIndex ? 'bg-[#8B0000]' : 'bg-white/20'}`}

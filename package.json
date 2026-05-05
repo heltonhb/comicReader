@@ -15,7 +15,9 @@
     "test:coverage": "vitest run --coverage",
     "test:ui": "vitest --ui",
     "preview": "vite preview",
-    "convert-hqs": "node scripts/convert-pdf-to-webp.js"
+    "convert-hqs": "node scripts/convert-pdf-to-webp.js",
+    "add-volume": "node scripts/add-volume.js",
+    "register-volume": "node scripts/register-volume.js"
   },
   "dependencies": {
     "fast-average-color": "^9.5.2",

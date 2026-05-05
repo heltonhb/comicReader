@@ -1,16 +1,123 @@
-# React + Vite
+# Gibiteca HQ
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Leitor interativo de histórias em quadrinhos (HQs) com experiência imersiva de leitura.
 
-Currently, two official plugins are available:
+## 🚀 Funcionalidades
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Modos de Leitura
 
-## React Compiler
+- **Flipbook**: Experiência clássica com páginas que viram, sombras e animações
+- **Webtoon**: Scroll vertical contínuo para leitura fluida
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Navegação
 
-## Expanding the ESLint configuration
+- Setas do teclado (← →) para virar páginas
+- Gestos de swipe em dispositivos tácteis
+- Clique nas laterais para avançar/voltar
+- Miniaturas navegáveis
+- Zoom com pinch (mobile) e scroll (desktop)
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Sincronização
+
+- Progresso de leitura guardado localmente
+- Sincronização com Firebase (login com Google)
+- Funciona offline (PWA)
+
+### UX
+
+- Fullscreen automático ao abrir volume
+- Controles que aparecem/ocultam automaticamente
+- Som ao virar página
+- Barra de progresso com número da página
+- Tema adaptável (claro/escuro baseado na cor da página)
+
+## 🛠️ Instalação
+
+```bash
+npm install
+```
+
+## ⚙️ Configuração
+
+Criar ficheiro `.env` na raiz com as tuas credenciais Firebase:
+
+```env
+VITE_FIREBASE_API_KEY=...
+VITE_FIREBASE_AUTH_DOMAIN=...
+VITE_FIREBASE_PROJECT_ID=...
+VITE_FIREBASE_STORAGE_BUCKET=...
+VITE_FIREBASE_MESSAGING_SENDER_ID=...
+VITE_FIREBASE_APP_ID=...
+```
+
+## 🧪 Desenvolvimento
+
+```bash
+# Iniciar servidor de desenvolvimento
+npm run dev
+
+# Build rápido (sem converter PDFs)
+npm run build:fast
+
+# Build com conversão de PDFs
+npm run build
+
+# Verificar erros de lint
+npm run lint
+
+# Verificar e corrigir formatação
+npm run format:check
+npm run format
+
+# Executar testes
+npm run test
+
+# Executar testes com cobertura
+npm run test:coverage
+```
+
+## 📁 Estrutura do Projeto
+
+```
+src/
+├── components/          # Componentes React
+├── hooks/               # Custom React hooks
+├── store/               # Zustand stores
+├── test/                # Testes
+├── assets/              # Imagens e recursos
+├── volumes.js           # Registo de volumes disponíveis
+├── firebase.js          # Configuração Firebase
+├── analytics.js         # Mixpanel tracking
+└── router.jsx           # Rotas da aplicação
+```
+
+## 📦 Adicionar um Novo Volume
+
+1. **Preparar imagens**: Converter PDF para WebP (1920px largura, qualidade 85)
+
+2. **Estrutura de pastas**: `public/volumes/nome-do-volume/`
+
+3. **Criar metadata.json**: `{"numPages": 48, "title": "...", "author": "..."}`
+
+4. **Registar em `src/volumes.js`**: Adicionar objeto ao array VOLUMES
+
+5. **Build e deploy**: `npm run build`
+
+## 🔧 Scripts Disponíveis
+
+| Script | Descrição |
+|--------|-----------|
+| `npm run dev` | Servidor de desenvolvimento |
+| `npm run build` | Build de produção |
+| `npm run lint` | Verificar erros de código |
+| `npm run format` | Formatar código |
+| `npm run test` | Executar testes |
+
+## 🎨 Design System
+
+- **Cor primária**: `#D4AF37` (dourado)
+- **Fundo**: `#0a0a0a` (quase preto)
+
+## 📝 Licença
+
+MIT

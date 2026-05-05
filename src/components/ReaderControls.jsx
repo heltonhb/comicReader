@@ -51,13 +51,13 @@ const ReaderControls = ({
 
     const theme = isLight
         ? {
-            bg: "bg-white/20 backdrop-blur-md",
+            bg: "bg-white/10 backdrop-blur-md",
             border: borderStyle,
             text: "text-red-500",
             divider: "bg-black/30"
         }
         : {
-            bg: "bg-black/40 backdrop-blur-md border border-white/10",
+            bg: "bg-black/20 backdrop-blur-md border border-white/10",
             border: borderStyle,
             text: "text-white",
             divider: "bg-white/20"
@@ -80,7 +80,7 @@ const ReaderControls = ({
                     `}>
                         <Tooltip text="Voltar">
                             <button 
-                                onClick={onBack} 
+                                onClick={() => { console.log('Voltar clicked'); onBack?.(); }} 
                                 className="p-2.5 hover:bg-white/10 rounded-xl transition-all duration-200 active:scale-95"
                             >
                                 <ArrowLeft size={20} strokeWidth={2.5} />

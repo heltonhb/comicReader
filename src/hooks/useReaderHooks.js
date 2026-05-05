@@ -252,6 +252,7 @@ export function useKeyboardNav({ enabled, onPrev, onNext, onEscapeZoom, onToggle
         if (!enabled) return;
 
         const handleKeyDown = (e) => {
+            console.log('🔑 Key pressed:', e.key, 'enabled:', enabled);
             if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
 
             switch (e.key) {

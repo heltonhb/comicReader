@@ -28,12 +28,8 @@ export const useSwipeNavigation = ({ onPrev, onNext, disabled }) => {
         // Threshold of 50px for swipe action
         if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) {
             if (dx > 0) {
-                // Swiped right -> go to previous
-                console.log('🔙 Swipe right - going to prev page');
                 onPrev();
             } else {
-                // Swiped left -> go to next
-                console.log('➡️ Swipe left - going to next page');
                 onNext();
             }
         }

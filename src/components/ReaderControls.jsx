@@ -81,7 +81,8 @@ const ReaderControls = ({
                         <Tooltip text="Voltar">
                             <button 
                                 onClick={() => { console.log('Voltar clicked'); onBack?.(); }} 
-                                className="p-2.5 hover:bg-white/10 rounded-xl transition-all duration-200 active:scale-95"
+                                className="p-2.5 hover:bg-white/10 rounded-xl transition-all duration-200 active:scale-95 touch-manipulation"
+                                style={{ touchAction: 'manipulation' }}
                             >
                                 <ArrowLeft size={20} strokeWidth={2.5} />
                             </button>

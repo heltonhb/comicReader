@@ -41,10 +41,6 @@ const Book: React.FC<BookProps> = ({ volume, onBack }) => {
         onChangeState,
     } = useBookController(volume);
 
-    useEffect(() => {
-        enterFullscreen();
-    }, [enterFullscreen]);
-
     const handleNext = () => {
         const reachedEnd = !nextFlip();
         if (reachedEnd && onBack) onBack();

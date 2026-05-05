@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../firebase';
 import { useAuth } from './useAuth';
@@ -240,17 +240,29 @@ export function useFullscreen() {
  * Hook for keyboard navigation.
  */
 export function useKeyboardNav({ enabled, onPrev, onNext, onEscapeZoom, onToggleFullscreen, resetControls }) {
+    const onPrevRef = React.useRef(onPrev);
+    const onNextRef = React.useRef(onNext);
+
+    React.useEffect(() => {
+        onPrevRef.current = onPrev;
+        onNextRef.current = onNext;
+    }, [onPrev, onNext]);
+
     useEffect(() => {
         if (!enabled) return;
 
         const handleKeyDown = (e) => {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
             switch (e.key) {
                 case 'ArrowLeft':
-                    onPrev();
+                    e.preventDefault();
+                    onPrevRef.current?.();
                     resetControls?.();
                     break;
                 case 'ArrowRight':
-                    onNext();
+                    e.preventDefault();
+                    onNextRef.current?.();
                     resetControls?.();
                     break;
                 case 'Escape':
@@ -269,7 +281,7 @@ export function useKeyboardNav({ enabled, onPrev, onNext, onEscapeZoom, onToggle
 
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [enabled, onPrev, onNext, onEscapeZoom, onToggleFullscreen, resetControls]);
+    }, [enabled, onEscapeZoom, onToggleFullscreen, resetControls]);
 }
 
 export function useReadingProgress(volumeId) {

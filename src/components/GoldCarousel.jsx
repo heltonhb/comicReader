@@ -135,7 +135,14 @@ const GoldCarousel = ({ volumes, activeIndex, setActiveIndex, onSelect, onClose 
                     ))}
                 </div>
 
-                <div className="absolute right-6 top-8">
+                <div className="absolute right-6 top-8 flex items-center gap-4">
+                    <button
+                        onClick={() => navigate('/library')}
+                        className="flex items-center gap-2 px-4 py-2 bg-[#D4AF37]/20 hover:bg-[#D4AF37]/30 border border-[#D4AF37]/30 rounded-full text-sm text-[#D4AF37] hover:text-[#D4AF37] transition-colors"
+                    >
+                        <Library size={18} />
+                        Biblioteca
+                    </button>
                     <button
                         onClick={onClose}
                         className="text-white/40 hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50 rounded-full p-1"
@@ -153,15 +160,6 @@ const GoldCarousel = ({ volumes, activeIndex, setActiveIndex, onSelect, onClose 
                         Gibiteca
                     </h1>
                 </div>
-
-                {/* Library Button */}
-                <button
-                    onClick={() => navigate('/library')}
-                    className="absolute left-6 top-1/2 -translate-y-1/2 flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-full text-sm text-white/80 hover:text-white transition-colors"
-                >
-                    <Library size={18} />
-                    Biblioteca
-                </button>
             </header>
 
             {/* Carousel Track */}

@@ -81,7 +81,15 @@ const ReaderControls = ({
                     `}>
                         <Tooltip text="Voltar">
                             <button 
-                                onClick={() => { console.log('🔙 Voltar clicked'); onBack?.(); }} 
+                                onClick={async () => { 
+                                    console.log('🔙 Voltar clicked');
+                                    try { 
+                                        if (document.fullscreenElement) {
+                                            await document.exitFullscreen();
+                                        }
+                                    } catch(e) { /* ignore */ }
+                                    onBack?.(); 
+                                }} 
                                 className="p-3 sm:p-2.5 hover:bg-white/10 rounded-xl transition-all duration-200 active:scale-95 touch-manipulation"
                                 style={{ touchAction: 'manipulation', WebkitTapHighlightColor: 'transparent' }}
                             >
